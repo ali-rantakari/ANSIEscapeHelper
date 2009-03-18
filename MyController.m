@@ -1,8 +1,10 @@
 #import "MyController.h"
 
 #define kANSIEscapePrefix	@"\033["
+
 #define kANSIEscapeReset 	@"\033[0m"
 #define kANSIEscapeBold 	@"\033[01m"
+
 #define kANSIEscapeRed 		@"\033[31m"
 #define kANSIEscapeGreen 	@"\033[32m"
 #define kANSIEscapeYellow 	@"\033[33m"
@@ -79,9 +81,17 @@
 				NSLog(@"  >> magenta");
 				thisAttributeValue = [NSColor magentaColor];
 			}
+			else if ([startSequence isEqualToString:kANSIEscapeBold])
+			{
+				NSLog(@"  >> bold");
+				thisAttributeName = NSFontAttributeName;
+				NSFont *boldFont = [NSFont fontWithName:[[textView font] fontName] size:[[textView font] pointSize]];
+				boldFont = [[NSFontManager sharedFontManager] convertFont:boldFont toHaveTrait:NSBoldFontMask];
+				thisAttributeValue = boldFont;
+			}
 			else
 			{
-				NSLog(@"  >> NO COLOR");
+				NSLog(@"  >> NO FORMAT");
 				thisAttributeName = nil;
 			}
 			
@@ -119,7 +129,10 @@
 				[formatsAndRanges addObject:thisNewFormatRange];
 			}
 			
-			NSLog(@"Adding:\n   '%@'\n   '%@'", endOfLastEndRangeToStartOfThisStartRange, thisRangeStr);
+			NSLog(@"Adding:\n   '%@'\n   '%@'",
+				  [endOfLastEndRangeToStartOfThisStartRange stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]],
+				  [thisRangeStr stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]]
+			);
 			newLinesStringMod = [newLinesStringMod stringByAppendingString:endOfLastEndRangeToStartOfThisStartRange];
 			newLinesStringMod = [newLinesStringMod stringByAppendingString:thisRangeStr];
 			
