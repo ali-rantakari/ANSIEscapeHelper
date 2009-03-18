@@ -157,6 +157,9 @@
 	}
 	while(thisEscapeSequenceRange.location != NSNotFound);
 	
+	if (searchRange.length > 0)
+		cleanString = [cleanString stringByAppendingString:[aString substringWithRange:searchRange]];
+	
 	NSLog(@"==> go through all escapeSequences");
 	
 	NSUInteger iSequence;

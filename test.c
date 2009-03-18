@@ -44,6 +44,10 @@ int main(int argc, char *argv[])
 	printf("%sred and now...%sreset!\n", kANSIEscapeRed, kANSIEscapeResetAlt);
 	printf("\n");
 	
+	printf("blabla:\n");
+	printf("%sred and now...%sgreen!%s\n", kANSIEscapeRed, kANSIEscapeGreen, kANSIEscapeReset);
+	printf("\n");
+	
 	printf("And some normal text here.");
 	printf("\n");
 	

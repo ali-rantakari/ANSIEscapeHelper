@@ -33,7 +33,37 @@
 
 - (void) showString:(NSString*)string
 {
-	[[textView textStorage] setAttributedString:[[[NSMutableAttributedString alloc] init] autorelease]];
+	NSArray *attrs = [NSArray arrayWithObjects:
+					  NSFontAttributeName,
+					  NSParagraphStyleAttributeName,
+					  NSForegroundColorAttributeName,
+					  NSUnderlineStyleAttributeName,
+					  NSSuperscriptAttributeName,
+					  NSBackgroundColorAttributeName,
+					  NSAttachmentAttributeName,
+					  NSLigatureAttributeName,
+					  NSBaselineOffsetAttributeName,
+					  NSKernAttributeName,
+					  NSLinkAttributeName,
+					  NSStrokeWidthAttributeName,
+					  NSStrokeColorAttributeName,
+					  NSUnderlineColorAttributeName,
+					  NSStrikethroughStyleAttributeName,
+					  NSStrikethroughColorAttributeName,
+					  NSShadowAttributeName,
+					  NSObliquenessAttributeName,
+					  NSExpansionAttributeName,
+					  NSCursorAttributeName,
+					  NSToolTipAttributeName,
+					  NSMarkedClauseSegmentAttributeName,
+					  nil
+					  ];
+	NSString *attr;
+	NSRange fullRange = NSMakeRange(0, [[textView string] length]);
+	for (attr in attrs)
+	{
+		[[textView textStorage] removeAttribute:attr range:fullRange];
+	}
 	
 	NSString *cleanNewLinesString = nil;
 	
