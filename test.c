@@ -10,6 +10,7 @@
 #define kANSIEscapeMagenta 	"\033[35m"
 #define kANSIEscapeCyan		"\033[36m"
 #define kANSIEscapeWhite	"\033[37m"
+#define kANSIEscapeFgReset	"\033[39m"
 
 #define kANSIEscapeBgRed 		"\033[41m"
 #define kANSIEscapeBgGreen 		"\033[42m"
@@ -18,6 +19,7 @@
 #define kANSIEscapeBgMagenta 	"\033[45m"
 #define kANSIEscapeBgCyan		"\033[46m"
 #define kANSIEscapeBgWhite		"\033[47m"
+#define kANSIEscapeBgReset		"\033[49m"
 
 
 int main(int argc, char *argv[])
@@ -30,6 +32,10 @@ int main(int argc, char *argv[])
 	printf("background colors:\n");
 	printf("%sred %sgreen%s %syellow%s and %sblue.\n", kANSIEscapeBgRed, kANSIEscapeBgGreen, kANSIEscapeReset, kANSIEscapeBgYellow, kANSIEscapeReset, kANSIEscapeBgBlue);
 	printf("%smagenta %scyan%s and %swhite%s.\n", kANSIEscapeBgMagenta, kANSIEscapeBgCyan, kANSIEscapeReset, kANSIEscapeBgWhite, kANSIEscapeReset);
+	printf("\n");
+	
+	printf("overlapping foreground and background colors:\n");
+	printf("%sgreen bg with %syellow fg%s still green bg%s bg reset", kANSIEscapeBgGreen, kANSIEscapeYellow, kANSIEscapeFgReset, kANSIEscapeBgReset);
 	printf("\n");
 	
 	return 0;
