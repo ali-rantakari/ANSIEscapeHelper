@@ -1,0 +1,13 @@
+
+.DS_Store
+
+build
+deployment
+
+deploymentScpTarget
+pathToSparklePrivateKey
+
+*.nib.orig
+*.pbxuser
+*.perspective
+*.perspectivev3
