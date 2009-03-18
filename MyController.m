@@ -27,16 +27,33 @@
 }
 
 
-- (IBAction)buttonPress:(id)sender
+- (IBAction) cProgramButtonPress:(id)sender
 {
-	//NSString *newLinesString = [self runTaskWithPath:@"/usr/local/bin/icalBuddy" withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]];
 	NSString *newLinesString = [self runTaskWithPath:[[NSBundle mainBundle] pathForResource:@"a" ofType:@"out"] withArgs:[NSArray array]];
-	
+	[self showString:newLinesString];
+}
+
+- (IBAction) icalBuddyButtonPress:(id)sender
+{
+	NSString *newLinesString = [self runTaskWithPath:@"/usr/local/bin/icalBuddy" withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]];
+	[self showString:newLinesString];
+}
+
+- (IBAction) perlScriptButtonPress:(id)sender
+{
+	NSString *newLinesString = [self runTaskWithPath:[[NSBundle mainBundle] pathForResource:@"test" ofType:@"pl"] withArgs:[NSArray array]];
+	[self showString:newLinesString];
+}
+
+
+- (void) showString:(NSString*)string
+{
+	[[textView textStorage] setAttributedString:[[[NSMutableAttributedString alloc] init] autorelease]];
 	
 	NSString *cleanNewLinesString = nil;
 	
 	ansiFormatter = [[[ANSIEscapeFormatter alloc] init] autorelease];
-	NSArray *formatsAndRanges = [ansiFormatter attributesForString:newLinesString cleanString:&cleanNewLinesString];
+	NSArray *formatsAndRanges = [ansiFormatter attributesForString:string cleanString:&cleanNewLinesString];
 	
 	NSLog(@"======");
 	NSLog(@"set clean string to textView");
@@ -56,9 +73,7 @@
 		 range:[[thisFormatRange objectForKey:@"range"] rangeValue]
 		 ];
 	}
-	
 }
-
 
 
 
