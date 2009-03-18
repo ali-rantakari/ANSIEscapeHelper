@@ -18,6 +18,8 @@
 - (IBAction)buttonPress:(id)sender
 {
 	NSString *newLinesString = [self runTaskWithPath:@"/usr/local/bin/icalBuddy" withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]];
+	//NSString *newLinesString = [self runTaskWithPath:[@"~/a.out" stringByExpandingTildeInPath] withArgs:[NSArray array]];
+	
 	NSString *newLinesStringMod = @"";
 	
 	// read ANSI formatting control sequences from the string and create attribute ranges
@@ -30,6 +32,7 @@
 	NSRange lastEndRange = NSMakeRange(0, 0);
 	do
 	{
+		NSLog(@"searchRange = %d-%d", searchRange.location, (searchRange.location+searchRange.length));
 		startRange = [newLinesString rangeOfString:kANSIEscapePrefix options:NSLiteralSearch range:searchRange];
 		if (startRange.location != NSNotFound)
 		{
@@ -48,7 +51,7 @@
 			NSLog(@"");
 			
 			NSString *startSequence = [newLinesString substringWithRange:startRange];
-			NSLog(@"startSequence = '%@'", startSequence);
+			NSLog(@"startSequence = '%@' (%d-%d)", startSequence, startRange.location, (startRange.location+startRange.length));
 			NSString *thisAttributeName = NSForegroundColorAttributeName;
 			NSObject *thisAttributeValue = nil;
 			if ([startSequence isEqualToString:kANSIEscapeRed])
@@ -89,6 +92,11 @@
 				boldFont = [[NSFontManager sharedFontManager] convertFont:boldFont toHaveTrait:NSBoldFontMask];
 				thisAttributeValue = boldFont;
 			}
+			else if ([startSequence isEqualToString:kANSIEscapeReset])
+			{
+				NSLog(@"  >> reset");
+				thisAttributeName = nil;
+			}
 			else
 			{
 				NSLog(@"  >> NO FORMAT");
@@ -115,7 +123,22 @@
 				endRange.length += lengthAddition;
 			}
 			
-			NSString *endOfLastEndRangeToStartOfThisStartRange = [newLinesString substringWithRange:NSMakeRange((lastEndRange.location+lastEndRange.length), (startRange.location-(lastEndRange.location+lastEndRange.length)))];
+			NSString *endSequence;
+			@try
+			{
+				endSequence = [newLinesString substringWithRange:endRange];
+			}
+			@catch (NSException *e)
+			{
+				endSequence = @"";
+			}
+			NSLog(@"endSequence = '%@' (%d-%d)", endSequence, endRange.location, (endRange.location+endRange.length));
+			
+			NSString *endOfLastEndRangeToStartOfThisStartRange;
+			if (lastEndRange.location+lastEndRange.length >= startRange.location)
+				endOfLastEndRangeToStartOfThisStartRange = @"";
+			else
+				endOfLastEndRangeToStartOfThisStartRange = [newLinesString substringWithRange:NSMakeRange((lastEndRange.location+lastEndRange.length), (startRange.location-(lastEndRange.location+lastEndRange.length)))];
 			NSString *thisRangeStr = [newLinesString substringWithRange:NSMakeRange((startRange.location+startRange.length), (endRange.location-(startRange.location+startRange.length)))];
 			
 			NSRange thisRange = NSMakeRange(([newLinesStringMod length]+[endOfLastEndRangeToStartOfThisStartRange length]), (endRange.location-(startRange.location+startRange.length)));
@@ -136,7 +159,10 @@
 			newLinesStringMod = [newLinesStringMod stringByAppendingString:endOfLastEndRangeToStartOfThisStartRange];
 			newLinesStringMod = [newLinesStringMod stringByAppendingString:thisRangeStr];
 			
-			searchRange.location = (endRange.location+endRange.length);
+			if ([endSequence isEqualToString:kANSIEscapeReset])
+				searchRange.location = (endRange.location+endRange.length);
+			else
+				searchRange.location = endRange.location;
 			searchRange.length = ([newLinesString length]-searchRange.location);
 			lastEndRange = endRange;
 		}
