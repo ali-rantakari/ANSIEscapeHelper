@@ -1,16 +1,36 @@
 //
 //  ANSIEscapeFormatter.m
-//  AnsiColorsTest
 //
 //  Created by Ali Rantakari on 18.3.09.
 //  Copyright 2009 Ali Rantakari. All rights reserved.
-//
+//  
+//  Description:
+//  ---------------
+//  Contains helper methods for dealing with strings
+//  that contain ANSI escape sequences for formatting
+//  (like colors etc.) Not optimized for speed or
+//  anything but should be ok enough for most
+//  purposes.
+//  
+// todo: add license!
+
+/*
+ todo:
+ 
+ - make sure that unsupported escape sequences are handled gracefully (i.e. we don't want to crash or hang)
+ - add support for underline & italic
+ - refactor system to deal mostly in integers instead of strings -- will make this *a lot* faster
+ - add support for several formatting specifiers in one control sequence (separated by ;, like: \033[31;45;01m )
+ - optimize! must be faster.
+ 
+ */
+
+
 
 #import "ANSIEscapeFormatter.h"
 
+// the Control Sequence Initiator -- i.e. "escape sequence prefix"
 #define kANSIEscapeCSI			@"\033["
-
-#define kControlSequenceMaxLengthAfterCSI 3
 
 #define kANSIEscapeAllReset		@"\033[0m"
 
@@ -59,10 +79,9 @@
 									kANSIEscapeAllReset, kANSIEscapeBgReset, kANSIEscapeFgReset,\
 									nil]
 
-
 @implementation ANSIEscapeFormatter
 
-
+@synthesize font;
 
 - (NSArray*) attributesForString:(NSString*)aString cleanString:(NSString**)aCleanString
 {
@@ -78,6 +97,7 @@
 	NSLog(@"========================");
 	
 	NSMutableArray *attrsAndRanges = [NSMutableArray array];
+	NSString *cleanString = @"";
 	
 	// find all escape sequences from aString and put them in this array along with their
 	// start locations within the "clean" version of aString (i.e. one without any
@@ -96,13 +116,20 @@
 		if (thisEscapeSequenceRange.location != NSNotFound)
 		{
 			// adjust range's length so that it encompasses the whole ANSI escape sequence
-			// and not just the Control Sequence Initiator (the "prefix")
-			unsigned int lengthAddition = 0;
-			unsigned int maxLengthAddition = kControlSequenceMaxLengthAfterCSI;
-			for (lengthAddition = 0; lengthAddition <= maxLengthAddition; lengthAddition++)
+			// and not just the Control Sequence Initiator (the "prefix") by finding the
+			// final byte of the control sequence (one that has an ASCII decimal value
+			// between 64 and 126)
+			unsigned int lengthAddition = 1;
+			NSUInteger thisIndex;
+			for (;;)
 			{
-				if ([[aString substringWithRange:NSMakeRange(thisEscapeSequenceRange.location+thisEscapeSequenceRange.length+lengthAddition-1, 1)] isEqualToString:@"m"])
+				thisIndex = (thisEscapeSequenceRange.location+thisEscapeSequenceRange.length+lengthAddition-1);
+				if (thisIndex >= aStringLength)
 					break;
+				unichar c = [aString characterAtIndex:thisIndex];
+				if ((64 <= c) && (c <= 126))
+					break;
+				lengthAddition++;
 			}
 			thisEscapeSequenceRange.length += lengthAddition;
 			
@@ -119,7 +146,11 @@
 			  ]
 			 ];
 			
-			coveredLength += thisEscapeSequenceRange.location-searchRange.location;
+			NSUInteger thisCoveredLength = thisEscapeSequenceRange.location-searchRange.location;
+			if (thisCoveredLength > 0)
+				cleanString = [cleanString stringByAppendingString:[aString substringWithRange:NSMakeRange(searchRange.location, thisCoveredLength)]];
+			
+			coveredLength += thisCoveredLength;
 			searchRange.location = thisEscapeSequenceRange.location+thisEscapeSequenceRange.length;
 			searchRange.length = aStringLength-searchRange.location;
 		}
@@ -237,8 +268,7 @@
 		{
 			NSLog(@"  >> bold at %d", formattingRunStartLocation);
 			thisAttributeName = NSFontAttributeName;
-			NSFont *boldFont = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-			boldFont = [[NSFontManager sharedFontManager] convertFont:boldFont toHaveTrait:NSBoldFontMask];
+			NSFont *boldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSBoldFontMask];
 			thisAttributeValue = boldFont;
 			thisEndSequences = kANSIEscapeIntensityEndSequences;
 		}
@@ -287,10 +317,9 @@
 		];
 	}
 	
-	NSLog(@"making clean string...");
+	NSLog(@"setting clean string...");
 	
-	// todo: build this string in the first do-while loop above -- it'll be faster
-	*aCleanString = [self stripEscapeSequencesFromString:aString];
+	*aCleanString = cleanString;
 	
 	NSLog(@"returning.");
 	

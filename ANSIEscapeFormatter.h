@@ -12,8 +12,10 @@
 
 @interface ANSIEscapeFormatter : NSObject
 {
-	
+	NSFont *font;
 }
+
+@property(retain) NSFont *font;
 
 - (NSArray*) attributesForString:(NSString*)aString cleanString:(NSString**)aCleanString;
 - (NSRange) rangeOfOneOfStrings:(NSArray*)aStrings inString:(NSString*)aSubject options:(NSStringCompareOptions)aOptions range:(NSRange)aRange;

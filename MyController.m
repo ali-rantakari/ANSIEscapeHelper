@@ -1,21 +1,6 @@
 #import "MyController.h"
 
 
-/*
- todo:
- 
- - modularize:
-	- write helper method rangeOfOneOfStrings:(NSArray*)strings inString:(NSString*)subject options: range:
-	- use the above to clean the thing up a bit
- - make finding of the endRange more intelligent:
-	- don't just get the next escape sequence; must get the
-	  next escape sequence that actually ends the formatting
-	  run that the start sequence starts (read the specs so
-	  that these become perfectly clear to you!)
- - make sure that unsupported escape sequences are handled gracefully (i.e. we don't want to crash or hang)
- - add support for underline & italic
- 
- */
 
 @implementation MyController
 
@@ -53,6 +38,7 @@
 	NSString *cleanNewLinesString = nil;
 	
 	ansiFormatter = [[[ANSIEscapeFormatter alloc] init] autorelease];
+	[ansiFormatter setFont:[textView font]];
 	NSArray *formatsAndRanges = [ansiFormatter attributesForString:string cleanString:&cleanNewLinesString];
 	
 	NSLog(@"======");

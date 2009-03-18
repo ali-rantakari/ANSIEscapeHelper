@@ -1,6 +1,8 @@
 #include <stdio.h>
 
 #define kANSIEscapeReset 	"\033[0m"
+#define kANSIEscapeResetAlt	"\033[m"
+
 #define kANSIEscapeBold 	"\033[01m"
 
 #define kANSIEscapeRed 		"\033[31m"
@@ -35,7 +37,14 @@ int main(int argc, char *argv[])
 	printf("\n");
 	
 	printf("overlapping foreground and background colors:\n");
-	printf("%sgreen bg with %syellow fg%s still green bg%s bg reset", kANSIEscapeBgGreen, kANSIEscapeYellow, kANSIEscapeFgReset, kANSIEscapeBgReset);
+	printf("%sgreen bg with %syellow fg%s still green bg%s bg reset\n", kANSIEscapeBgGreen, kANSIEscapeYellow, kANSIEscapeFgReset, kANSIEscapeBgReset);
+	printf("\n");
+	
+	printf("test alternative resets:\n");
+	printf("%sred and now...%sreset!\n", kANSIEscapeRed, kANSIEscapeResetAlt);
+	printf("\n");
+	
+	printf("And some normal text here.");
 	printf("\n");
 	
 	return 0;
