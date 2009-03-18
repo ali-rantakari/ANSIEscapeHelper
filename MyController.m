@@ -11,14 +11,24 @@
 #define kANSIEscapeBlue 	@"\033[34m"
 #define kANSIEscapeMagenta 	@"\033[35m"
 #define kANSIEscapeCyan		@"\033[36m"
+#define kANSIEscapeWhite	@"\033[37m"
+
+#define kANSIEscapeBgRed 		@"\033[41m"
+#define kANSIEscapeBgGreen 		@"\033[42m"
+#define kANSIEscapeBgYellow 	@"\033[43m"
+#define kANSIEscapeBgBlue 		@"\033[44m"
+#define kANSIEscapeBgMagenta 	@"\033[45m"
+#define kANSIEscapeBgCyan		@"\033[46m"
+#define kANSIEscapeBgWhite		@"\033[47m"
+
 
 
 @implementation MyController
 
 - (IBAction)buttonPress:(id)sender
 {
-	NSString *newLinesString = [self runTaskWithPath:@"/usr/local/bin/icalBuddy" withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]];
-	//NSString *newLinesString = [self runTaskWithPath:[@"~/a.out" stringByExpandingTildeInPath] withArgs:[NSArray array]];
+	//NSString *newLinesString = [self runTaskWithPath:@"/usr/local/bin/icalBuddy" withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]];
+	NSString *newLinesString = [self runTaskWithPath:[[NSBundle mainBundle] pathForResource:@"a" ofType:@"out"] withArgs:[NSArray array]];
 	
 	NSString *newLinesStringMod = @"";
 	
@@ -39,7 +49,7 @@
 			// adjust start range's length so that it encompasses the whole ANSI escape sequence
 			// and not just the prefix
 			unsigned int startLengthAddition = 0;
-			unsigned int maxStartLengthAddition = 5;
+			unsigned int maxStartLengthAddition = 3;
 			for (startLengthAddition = 0; startLengthAddition <= maxStartLengthAddition; startLengthAddition++)
 			{
 				if ([[newLinesString substringWithRange:NSMakeRange(startRange.location+startRange.length+startLengthAddition-1, 1)] isEqualToString:@"m"])
@@ -84,6 +94,53 @@
 				NSLog(@"  >> magenta");
 				thisAttributeValue = [NSColor magentaColor];
 			}
+			else if ([startSequence isEqualToString:kANSIEscapeWhite])
+			{
+				NSLog(@"  >> white");
+				thisAttributeValue = [NSColor whiteColor];
+			}
+			else if ([startSequence isEqualToString:kANSIEscapeBgRed])
+			{
+				NSLog(@"  >> redBg");
+				thisAttributeName = NSBackgroundColorAttributeName;
+				thisAttributeValue = [NSColor redColor];
+			}
+			else if ([startSequence isEqualToString:kANSIEscapeBgBlue])
+			{
+				NSLog(@"  >> blueBg");
+				thisAttributeName = NSBackgroundColorAttributeName;
+				thisAttributeValue = [NSColor blueColor];
+			}
+			else if ([startSequence isEqualToString:kANSIEscapeBgGreen])
+			{
+				NSLog(@"  >> greenBg");
+				thisAttributeName = NSBackgroundColorAttributeName;
+				thisAttributeValue = [NSColor greenColor];
+			}
+			else if ([startSequence isEqualToString:kANSIEscapeBgYellow])
+			{
+				NSLog(@"  >> yellowBg");
+				thisAttributeName = NSBackgroundColorAttributeName;
+				thisAttributeValue = [NSColor yellowColor];
+			}
+			else if ([startSequence isEqualToString:kANSIEscapeBgCyan])
+			{
+				NSLog(@"  >> cyanBg");
+				thisAttributeName = NSBackgroundColorAttributeName;
+				thisAttributeValue = [NSColor cyanColor];
+			}
+			else if ([startSequence isEqualToString:kANSIEscapeBgMagenta])
+			{
+				NSLog(@"  >> magentaBg");
+				thisAttributeName = NSBackgroundColorAttributeName;
+				thisAttributeValue = [NSColor magentaColor];
+			}
+			else if ([startSequence isEqualToString:kANSIEscapeBgWhite])
+			{
+				NSLog(@"  >> whiteBg");
+				thisAttributeName = NSBackgroundColorAttributeName;
+				thisAttributeValue = [NSColor whiteColor];
+			}
 			else if ([startSequence isEqualToString:kANSIEscapeBold])
 			{
 				NSLog(@"  >> bold");
@@ -100,7 +157,11 @@
 			else
 			{
 				NSLog(@"  >> NO FORMAT");
-				thisAttributeName = nil;
+				// we don't recognize this ANSI escape sequence, so we just skip it
+				searchRange.location = (startRange.location+startRange.length);
+				searchRange.length = ([newLinesString length]-searchRange.location);
+				lastEndRange = endRange;
+				continue;
 			}
 			
 			// format specifier found, now let's try to find the end of this "formatting run" by
@@ -114,7 +175,7 @@
 				// adjust end range's length so that it encompasses the whole ANSI escape sequence
 				// and not just the prefix
 				unsigned int lengthAddition = 0;
-				unsigned int maxLengthAddition = 5;
+				unsigned int maxLengthAddition = 3;
 				for (lengthAddition = 0; lengthAddition <= maxLengthAddition; lengthAddition++)
 				{
 					if ([[newLinesString substringWithRange:NSMakeRange(endRange.location+endRange.length+lengthAddition-1, 1)] isEqualToString:@"m"])
