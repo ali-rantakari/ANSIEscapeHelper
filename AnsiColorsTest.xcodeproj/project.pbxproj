@@ -13,6 +13,7 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C926C7960F7136220057A11E /* MyController.m in Sources */ = {isa = PBXBuildFile; fileRef = C926C7940F7136220057A11E /* MyController.m */; };
 		C926C8850F715CFB0057A11E /* a.out in Resources */ = {isa = PBXBuildFile; fileRef = C926C8840F715CFB0057A11E /* a.out */; };
+		C9FB759B0F718745009BA734 /* ANSIEscapeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FB759A0F718745009BA734 /* ANSIEscapeFormatter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,8 @@
 		C926C7940F7136220057A11E /* MyController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyController.m; sourceTree = "<group>"; };
 		C926C7950F7136220057A11E /* MyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyController.h; sourceTree = "<group>"; };
 		C926C8840F715CFB0057A11E /* a.out */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = a.out; sourceTree = "<group>"; };
+		C9FB75990F718745009BA734 /* ANSIEscapeFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANSIEscapeFormatter.h; sourceTree = "<group>"; };
+		C9FB759A0F718745009BA734 /* ANSIEscapeFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ANSIEscapeFormatter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +51,8 @@
 			children = (
 				C926C7950F7136220057A11E /* MyController.h */,
 				C926C7940F7136220057A11E /* MyController.m */,
+				C9FB75990F718745009BA734 /* ANSIEscapeFormatter.h */,
+				C9FB759A0F718745009BA734 /* ANSIEscapeFormatter.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -177,6 +182,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				C926C7960F7136220057A11E /* MyController.m in Sources */,
+				C9FB759B0F718745009BA734 /* ANSIEscapeFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
