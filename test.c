@@ -47,12 +47,20 @@ int main(int argc, char *argv[])
 	printf("%sgreen bg with %syellow fg%s still green bg%s bg reset\n", kANSIEscapeBgGreen, kANSIEscapeYellow, kANSIEscapeFgReset, kANSIEscapeBgReset);
 	printf("\n");
 	
-	printf("test alternative reset:\n");
-	printf("%sred and now...%sreset!\n", kANSIEscapeRed, kANSIEscapeResetAlt);
+	printf("test italic & alternative reset:\n");
+	printf("hello %si am italic!%s ..still? %sred and now...%sreset!\n", kANSIEscapeItalic, kANSIEscapeItalic, kANSIEscapeRed, kANSIEscapeResetAlt);
 	printf("\n");
 	
 	printf("bold and underline:\n");
 	printf("start underline:%shello i am %sdoubly%s underlined %sand bold%s, %soccasionally.%s sometimes not underlined anymore.%s\n", kANSIEscapeUnderlineSingle, kANSIEscapeUnderlineDouble, kANSIEscapeUnderlineSingle, kANSIEscapeBold, kANSIEscapeBoldOff, kANSIEscapeBlue, kANSIEscapeUnderlineNone, kANSIEscapeReset);
+	printf("\n");
+	
+	printf("several codes in one sequence:\n");
+	printf("\033[46;31;4mlots of formats at once%s\n", kANSIEscapeResetAlt);
+	printf("\n");
+	
+	printf("non-SGR control sequences (after 'd', delete 2 chars backwards):\n");
+	printf("abcd\033[2Defg\n");
 	printf("\n");
 	
 	printf("And some normal text here.");

@@ -17,9 +17,6 @@
 /*
  todo:
  
- - make sure that unsupported escape sequences are handled gracefully (i.e. we don't want to crash or hang)
- - test support for underline & italic
- - test several formatting specifiers in one control sequence (separated by ;, like: \033[31;45;01m )
  - optimize. it would be nice if this was faster.
  - write proper API documentation
  
