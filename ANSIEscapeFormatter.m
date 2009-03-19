@@ -58,24 +58,7 @@
 	self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
 	
 	// default ANSI colors
-	self.ansiColors = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-					   kDefaultANSIColorFgBlack, 	[NSNumber numberWithInt:SGRCodeFgBlack],
-					   kDefaultANSIColorFgWhite, 	[NSNumber numberWithInt:SGRCodeFgWhite],
-					   kDefaultANSIColorFgRed,		[NSNumber numberWithInt:SGRCodeFgRed],
-					   kDefaultANSIColorFgGreen, 	[NSNumber numberWithInt:SGRCodeFgGreen],
-					   kDefaultANSIColorFgYellow, 	[NSNumber numberWithInt:SGRCodeFgYellow],
-					   kDefaultANSIColorFgBlue, 	[NSNumber numberWithInt:SGRCodeFgBlue],
-					   kDefaultANSIColorFgMagenta,	[NSNumber numberWithInt:SGRCodeFgMagenta],
-					   kDefaultANSIColorFgCyan, 	[NSNumber numberWithInt:SGRCodeFgCyan],
-					   kDefaultANSIColorBgBlack, 	[NSNumber numberWithInt:SGRCodeBgBlack],
-					   kDefaultANSIColorBgWhite, 	[NSNumber numberWithInt:SGRCodeBgWhite],
-					   kDefaultANSIColorBgRed,		[NSNumber numberWithInt:SGRCodeBgRed],
-					   kDefaultANSIColorBgGreen, 	[NSNumber numberWithInt:SGRCodeBgGreen],
-					   kDefaultANSIColorBgYellow, 	[NSNumber numberWithInt:SGRCodeBgYellow],
-					   kDefaultANSIColorBgBlue, 	[NSNumber numberWithInt:SGRCodeBgBlue],
-					   kDefaultANSIColorBgMagenta,	[NSNumber numberWithInt:SGRCodeBgMagenta],
-					   kDefaultANSIColorBgCyan, 	[NSNumber numberWithInt:SGRCodeBgCyan],
-					   nil];
+	self.ansiColors = [NSMutableDictionary dictionary];
 	
 	return self;
 }
