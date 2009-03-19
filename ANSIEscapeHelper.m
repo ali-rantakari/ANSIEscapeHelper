@@ -9,8 +9,6 @@
 /*
  todo:
  
- - optimize. it would be nice if this was faster.
- - write & generate proper API documentation
  
  */
 
@@ -73,9 +71,6 @@
 		return [NSArray array];
 	}
 	
-	NSLog(@"STARTING");
-	NSLog(@"========================");
-	
 	NSMutableArray *attrsAndRanges = [NSMutableArray array];
 	NSString *cleanString = @"";
 	
@@ -83,8 +78,6 @@
 	// start locations within the "clean" version of aString (i.e. one without any
 	// escape sequences)
 	NSMutableArray *formatCodes = [NSMutableArray array];
-	
-	NSLog(@"==> collect all formatCodes");
 	
 	NSUInteger aStringLength = [aString length];
 	NSUInteger coveredLength = 0;
@@ -115,7 +108,6 @@
 				if ((48 <= c) && (c <= 57)) // 0-9
 				{
 					int digit = c-48;
-					NSLog(@"====== %d", digit);
 					code = (code == 0) ? digit : code*10+digit;
 				}
 				
@@ -124,18 +116,13 @@
 				// for the output; exactly what we're interested in.
 				if (c == 109)
 				{
-					NSLog(@"====== m");
 					[codes addObject:[NSNumber numberWithUnsignedInt:code]];
 					break;
 				}
 				else if ((64 <= c) && (c <= 126)) // any other valid final byte
-				{
-					NSLog(@"====== end");
 					break;
-				}
 				else if (c == 59) // semicolon (;) separates codes within the same sequence
 				{
-					NSLog(@"====== ;");
 					[codes addObject:[NSNumber numberWithUnsignedInt:code]];
 					code = 0;
 				}
@@ -149,8 +136,6 @@
 			NSUInteger iCode;
 			for (iCode = 0; iCode < [codes count]; iCode++)
 			{
-				NSLog(@"  >> found code %d at %d", [[codes objectAtIndex:iCode] unsignedIntValue], locationInCleanString);
-				
 				[formatCodes addObject:
 				 [NSDictionary dictionaryWithObjectsAndKeys:
 				  [codes objectAtIndex:iCode], @"code",
@@ -175,13 +160,9 @@
 		cleanString = [cleanString stringByAppendingString:[aString substringWithRange:searchRange]];
 	
 	
-	NSLog(@"==> go through all formatCodes");
-	
 	NSUInteger iCode;
 	for (iCode = 0; iCode < [formatCodes count]; iCode++)
 	{
-		NSLog(@"--> %d of %d", iCode, [formatCodes count]-1);
-		
 		NSDictionary *thisCodeDict = [formatCodes objectAtIndex:iCode];
 		unichar thisCode = [[thisCodeDict objectForKey:@"code"] unsignedIntValue];
 		NSUInteger formattingRunStartLocation = [[thisCodeDict objectForKey:@"location"] unsignedIntegerValue];
@@ -272,10 +253,6 @@
 		}
 		
 		
-		
-		
-		NSLog(@"  find end sequence...");
-		
 		// find the next sequence that specifies the end of this formatting run
 		NSInteger formattingRunEndLocation = -1;
 		if (iCode < ([formatCodes count]-1))
@@ -298,8 +275,6 @@
 		if (formattingRunEndLocation == -1)
 			formattingRunEndLocation = aStringLength;
 		
-		NSLog(@"  end location: %d (string length %d)", formattingRunEndLocation, aStringLength);
-		
 		[attrsAndRanges addObject:
 		 [NSDictionary dictionaryWithObjectsAndKeys:
 		  [NSValue valueWithRange:NSMakeRange(formattingRunStartLocation, (formattingRunEndLocation-formattingRunStartLocation))], @"range",
@@ -310,11 +285,7 @@
 		];
 	}
 	
-	NSLog(@"setting clean string...");
-	
 	*aCleanString = cleanString;
-	
-	NSLog(@"returning.");
 	
 	return attrsAndRanges;
 }
