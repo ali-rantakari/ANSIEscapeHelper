@@ -39,7 +39,17 @@
 #define kDefaultANSIColorBgCyan		[NSColor cyanColor]
 #define kDefaultANSIColorBgWhite	[NSColor whiteColor]
 
+// dictionary keys for the SGR code dictionaries we'll use below
+// in attributesForString:cleanString:
+#define kCodeDictKey_code		@"code"
+#define kCodeDictKey_location	@"location"
 
+// dictionary keys for the string formatting attribute
+// dictionaries that the array attributesForString:cleanString:
+// returns contains
+#define kAttrDictKey_range			@"range"
+#define kAttrDictKey_attrName		@"attributeName"
+#define kAttrDictKey_attrValue		@"attributeValue"
 
 
 @implementation ANSIEscapeHelper
@@ -74,9 +84,8 @@
 	NSMutableArray *attrsAndRanges = [NSMutableArray array];
 	NSString *cleanString = @"";
 	
-	// find all escape sequences from aString and put them in this array along with their
-	// start locations within the "clean" version of aString (i.e. one without any
-	// escape sequences)
+	// find all escape sequence codes from aString and put them in this array
+	// along with their start locations within the "clean" version of aString
 	NSMutableArray *formatCodes = [NSMutableArray array];
 	
 	NSUInteger aStringLength = [aString length];
@@ -93,8 +102,8 @@
 			// final byte of the control sequence (one that has an ASCII decimal value
 			// between 64 and 126.) at the same time, read all formatting codes from inside
 			// this escape sequence (there may be several, separated by semicolons.)
-			unsigned int code = 0;
 			NSMutableArray *codes = [NSMutableArray array];
+			unsigned int code = 0;
 			unsigned int lengthAddition = 1;
 			NSUInteger thisIndex;
 			for (;;)
@@ -120,7 +129,10 @@
 					break;
 				}
 				else if ((64 <= c) && (c <= 126)) // any other valid final byte
+				{
+					[codes removeAllObjects];
 					break;
+				}
 				else if (c == 59) // semicolon (;) separates codes within the same sequence
 				{
 					[codes addObject:[NSNumber numberWithUnsignedInt:code]];
@@ -138,8 +150,8 @@
 			{
 				[formatCodes addObject:
 				 [NSDictionary dictionaryWithObjectsAndKeys:
-				  [codes objectAtIndex:iCode], @"code",
-				  [NSNumber numberWithUnsignedInteger:locationInCleanString], @"location",
+				  [codes objectAtIndex:iCode], kCodeDictKey_code,
+				  [NSNumber numberWithUnsignedInteger:locationInCleanString], kCodeDictKey_location,
 				  nil
 				  ]
 				 ];
@@ -160,12 +172,17 @@
 		cleanString = [cleanString stringByAppendingString:[aString substringWithRange:searchRange]];
 	
 	
+	// go through all the found escape sequence codes and for each one, create
+	// the string formatting attribute name and value, find the next escape
+	// sequence that specifies the end of the formatting run started by
+	// the currently handled code, and generate a range from the difference
+	// in those codes' locations within the clean aString.
 	NSUInteger iCode;
 	for (iCode = 0; iCode < [formatCodes count]; iCode++)
 	{
 		NSDictionary *thisCodeDict = [formatCodes objectAtIndex:iCode];
-		unichar thisCode = [[thisCodeDict objectForKey:@"code"] unsignedIntValue];
-		NSUInteger formattingRunStartLocation = [[thisCodeDict objectForKey:@"location"] unsignedIntegerValue];
+		unichar thisCode = [[thisCodeDict objectForKey:kCodeDictKey_code] unsignedIntValue];
+		NSUInteger formattingRunStartLocation = [[thisCodeDict objectForKey:kCodeDictKey_location] unsignedIntegerValue];
 		
 		// the attributed string attribute name for the formatting run introduced
 		// by this code
@@ -263,11 +280,11 @@
 			for (iEndCode = iCode+1; iEndCode < [formatCodes count]; iEndCode++)
 			{
 				thisEndCodeCandidateDict = [formatCodes objectAtIndex:iEndCode];
-				thisEndCodeCandidate = [[thisEndCodeCandidateDict objectForKey:@"code"] unsignedIntValue];
+				thisEndCodeCandidate = [[thisEndCodeCandidateDict objectForKey:kCodeDictKey_code] unsignedIntValue];
 				
 				if ([self sgrCode:thisEndCodeCandidate endsFormattingIntroducedByCode:thisCode])
 				{
-					formattingRunEndLocation = [[thisEndCodeCandidateDict objectForKey:@"location"] unsignedIntegerValue];
+					formattingRunEndLocation = [[thisEndCodeCandidateDict objectForKey:kCodeDictKey_location] unsignedIntegerValue];
 					break;
 				}
 			}
@@ -275,11 +292,13 @@
 		if (formattingRunEndLocation == -1)
 			formattingRunEndLocation = aStringLength;
 		
+		// add attribute name, attribute value and formatting run range
+		// to the array we're going to return
 		[attrsAndRanges addObject:
 		 [NSDictionary dictionaryWithObjectsAndKeys:
-		  [NSValue valueWithRange:NSMakeRange(formattingRunStartLocation, (formattingRunEndLocation-formattingRunStartLocation))], @"range",
-		  thisAttributeName, @"attributeName",
-		  thisAttributeValue, @"attributeValue",
+		  [NSValue valueWithRange:NSMakeRange(formattingRunStartLocation, (formattingRunEndLocation-formattingRunStartLocation))], kAttrDictKey_range,
+		  thisAttributeName, kAttrDictKey_attrName,
+		  thisAttributeValue, kAttrDictKey_attrValue,
 		  nil
 		 ]
 		];
