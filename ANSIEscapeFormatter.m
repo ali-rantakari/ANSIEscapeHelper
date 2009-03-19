@@ -18,10 +18,10 @@
  todo:
  
  - make sure that unsupported escape sequences are handled gracefully (i.e. we don't want to crash or hang)
- - add support for underline & italic
- - refactor system to deal mostly in integers instead of strings -- will make this *a lot* faster
- - add support for several formatting specifiers in one control sequence (separated by ;, like: \033[31;45;01m )
- - optimize! must be faster.
+ - test support for underline & italic
+ - test several formatting specifiers in one control sequence (separated by ;, like: \033[31;45;01m )
+ - optimize. it would be nice if this was faster.
+ - write proper API documentation
  
  */
 
@@ -29,55 +29,71 @@
 
 #import "ANSIEscapeFormatter.h"
 
-// the Control Sequence Initiator -- i.e. "escape sequence prefix"
+// the CSI (Control Sequence Initiator) -- i.e. "escape sequence prefix".
+// (add your own CSI:Miami joke here)
 #define kANSIEscapeCSI			@"\033["
 
-#define kANSIEscapeAllReset		@"\033[0m"
+// macro definitions for different SGR (Select Graphic Rendition)
+// control codes and for functions used to check whether the
+// occurrence of a given code would end a specific kind of formatting
+// run (e.g. foreground color, or underlining.)
 
-#define kANSIEscapeIntensityBold	@"\033[01m"
-#define kANSIEscapeIntensityReset	@"\033[22m"
+#define kSGRCodeAllReset		0
 
-#define kANSIEscapeIntensityEndSequences [NSArray arrayWithObjects:kANSIEscapeIntensityReset, kANSIEscapeAllReset, nil]
+#define kSGRCodeIntensityBold	1
+#define kSGRCodeIntensityFaint	2
+#define kSGRCodeIntensityNormal	22
 
-#define kANSIEscapeFgRed 		@"\033[31m"
-#define kANSIEscapeFgGreen		@"\033[32m"
-#define kANSIEscapeFgYellow 	@"\033[33m"
-#define kANSIEscapeFgBlue		@"\033[34m"
-#define kANSIEscapeFgMagenta 	@"\033[35m"
-#define kANSIEscapeFgCyan		@"\033[36m"
-#define kANSIEscapeFgWhite		@"\033[37m"
-#define kANSIEscapeFgReset		@"\033[39m"
+#define kCodeEndsIntensityFormatting(x)		(x == kSGRCodeAllReset || x == kSGRCodeIntensityNormal || \
+											 x == kSGRCodeIntensityBold || x == kSGRCodeIntensityFaint)
 
-#define kANSIEscapeFgEndSequences [NSArray arrayWithObjects:\
-										kANSIEscapeFgRed, kANSIEscapeFgBlue, kANSIEscapeFgGreen, kANSIEscapeFgYellow,\
-										kANSIEscapeFgCyan, kANSIEscapeFgMagenta, kANSIEscapeFgWhite,\
-										kANSIEscapeFgReset, kANSIEscapeAllReset,\
-										nil\
-									]
+#define kSGRCodeItalicOn		3
 
-#define kANSIEscapeBgRed 		@"\033[41m"
-#define kANSIEscapeBgGreen 		@"\033[42m"
-#define kANSIEscapeBgYellow 	@"\033[43m"
-#define kANSIEscapeBgBlue 		@"\033[44m"
-#define kANSIEscapeBgMagenta 	@"\033[45m"
-#define kANSIEscapeBgCyan		@"\033[46m"
-#define kANSIEscapeBgWhite		@"\033[47m"
-#define kANSIEscapeBgReset		@"\033[49m"
+#define kCodeEndsItalicFormatting(x)		(x == kSGRCodeAllReset || x == kSGRCodeItalicOn)
 
-#define kANSIEscapeBgEndSequences [NSArray arrayWithObjects:\
-										kANSIEscapeBgRed, kANSIEscapeBgBlue, kANSIEscapeBgGreen, kANSIEscapeBgYellow,\
-										kANSIEscapeBgCyan, kANSIEscapeBgMagenta, kANSIEscapeBgWhite,\
-										kANSIEscapeBgReset, kANSIEscapeAllReset,\
-										nil]
 
-#define kAllANSIEscapeSequences [NSArray arrayWithObjects:\
-									kANSIEscapeIntensityBold,\
-									kANSIEscapeFgRed, kANSIEscapeFgGreen, kANSIEscapeFgYellow, kANSIEscapeFgBlue,\
-									kANSIEscapeFgMagenta, kANSIEscapeFgCyan, kANSIEscapeFgWhite,\
-									kANSIEscapeBgRed, kANSIEscapeBgGreen, kANSIEscapeBgYellow, kANSIEscapeBgBlue,\
-									kANSIEscapeBgMagenta, kANSIEscapeBgCyan, kANSIEscapeBgWhite,\
-									kANSIEscapeAllReset, kANSIEscapeBgReset, kANSIEscapeFgReset,\
-									nil]
+#define kSGRCodeUnderlineSingle	4
+#define kSGRCodeUnderlineDouble	21
+#define kSGRCodeUnderlineNone	24
+
+#define kCodeEndsUnderlineFormatting(x)		(x == kSGRCodeAllReset || x == kSGRCodeUnderlineNone || \
+											 x == kSGRCodeUnderlineSingle || x == kSGRCodeUnderlineDouble)
+
+
+#define kSGRCodeFgBlack		30
+#define kSGRCodeFgRed		31
+#define kSGRCodeFgGreen		32
+#define kSGRCodeFgYellow	33
+#define kSGRCodeFgBlue		34
+#define kSGRCodeFgMagenta	35
+#define kSGRCodeFgCyan		36
+#define kSGRCodeFgWhite		37
+#define kSGRCodeFgReset		39
+
+#define kCodeEndsFgFormatting(x)	(x == kSGRCodeAllReset || x == kSGRCodeFgReset || \
+									 x == kSGRCodeFgBlack || x == kSGRCodeFgRed || \
+									 x == kSGRCodeFgGreen || x == kSGRCodeFgYellow || \
+									 x == kSGRCodeFgBlue || x == kSGRCodeFgMagenta || \
+									 x == kSGRCodeFgCyan || x == kSGRCodeFgWhite)
+
+
+#define kSGRCodeBgBlack		40
+#define kSGRCodeBgRed		41
+#define kSGRCodeBgGreen		42
+#define kSGRCodeBgYellow	43
+#define kSGRCodeBgBlue		44
+#define kSGRCodeBgMagenta	45
+#define kSGRCodeBgCyan		46
+#define kSGRCodeBgWhite		47
+#define kSGRCodeBgReset		49
+
+#define kCodeEndsBgFormatting(x)	(x == kSGRCodeAllReset || x == kSGRCodeBgReset || \
+									 x == kSGRCodeBgBlack || x == kSGRCodeBgRed || \
+									 x == kSGRCodeBgGreen || x == kSGRCodeBgYellow || \
+									 x == kSGRCodeBgBlue || x == kSGRCodeBgMagenta || \
+									 x == kSGRCodeBgCyan || x == kSGRCodeBgWhite)
+
+
 
 @implementation ANSIEscapeFormatter
 
@@ -102,9 +118,9 @@
 	// find all escape sequences from aString and put them in this array along with their
 	// start locations within the "clean" version of aString (i.e. one without any
 	// escape sequences)
-	NSMutableArray *escapeSequences = [NSMutableArray array];
+	NSMutableArray *formatCodes = [NSMutableArray array];
 	
-	NSLog(@"==> collect all escapeSequences");
+	NSLog(@"==> collect all formatCodes");
 	
 	NSUInteger aStringLength = [aString length];
 	NSUInteger coveredLength = 0;
@@ -118,7 +134,10 @@
 			// adjust range's length so that it encompasses the whole ANSI escape sequence
 			// and not just the Control Sequence Initiator (the "prefix") by finding the
 			// final byte of the control sequence (one that has an ASCII decimal value
-			// between 64 and 126)
+			// between 64 and 126.) at the same time, read all formatting codes from inside
+			// this escape sequence (there may be several, separated by semicolons.)
+			unsigned int code = 0;
+			NSMutableArray *codes = [NSMutableArray array];
 			unsigned int lengthAddition = 1;
 			NSUInteger thisIndex;
 			for (;;)
@@ -126,25 +145,56 @@
 				thisIndex = (thisEscapeSequenceRange.location+thisEscapeSequenceRange.length+lengthAddition-1);
 				if (thisIndex >= aStringLength)
 					break;
-				unichar c = [aString characterAtIndex:thisIndex];
-				if ((64 <= c) && (c <= 126))
+				
+				int c = (int)[aString characterAtIndex:thisIndex];
+				
+				if ((48 <= c) && (c <= 57)) // 0-9
+				{
+					int digit = c-48;
+					NSLog(@"====== %d", digit);
+					code = (code == 0) ? digit : code*10+digit;
+				}
+				
+				// ASCII decimal 109 is the SGR (Select Graphic Rendition) final byte
+				// ("m"). this means that the code value we've just read specifies formatting
+				// for the output; exactly what we're interested in.
+				if (c == 109)
+				{
+					NSLog(@"====== m");
+					[codes addObject:[NSNumber numberWithUnsignedInt:code]];
 					break;
+				}
+				else if ((64 <= c) && (c <= 126)) // any other valid final byte
+				{
+					NSLog(@"====== end");
+					break;
+				}
+				else if (c == 59) // semicolon (;) separates codes within the same sequence
+				{
+					NSLog(@"====== ;");
+					[codes addObject:[NSNumber numberWithUnsignedInt:code]];
+					code = 0;
+				}
+				
 				lengthAddition++;
 			}
 			thisEscapeSequenceRange.length += lengthAddition;
 			
-			NSString *thisEscapeSequence = [aString substringWithRange:thisEscapeSequenceRange];
-			NSUInteger thisEscapeSequenceLocation = coveredLength+thisEscapeSequenceRange.location-searchRange.location;
+			NSUInteger locationInCleanString = coveredLength+thisEscapeSequenceRange.location-searchRange.location;
 			
-			NSLog(@"  >> found '%@' at %d", thisEscapeSequence, thisEscapeSequenceLocation);
-			
-			[escapeSequences addObject:
-			 [NSDictionary dictionaryWithObjectsAndKeys:
-			  thisEscapeSequence, @"sequence",
-			  [NSNumber numberWithUnsignedInteger:thisEscapeSequenceLocation], @"location",
-			  nil
-			  ]
-			 ];
+			NSUInteger iCode;
+			for (iCode = 0; iCode < [codes count]; iCode++)
+			{
+				NSLog(@"  >> found code %d at %d", [[codes objectAtIndex:iCode] unsignedIntValue], locationInCleanString);
+				
+				[formatCodes addObject:
+				 [NSDictionary dictionaryWithObjectsAndKeys:
+				  [codes objectAtIndex:iCode], @"code",
+				  [NSNumber numberWithUnsignedInteger:locationInCleanString], @"location",
+				  nil
+				  ]
+				 ];
+			}
 			
 			NSUInteger thisCoveredLength = thisEscapeSequenceRange.location-searchRange.location;
 			if (thisCoveredLength > 0)
@@ -160,147 +210,170 @@
 	if (searchRange.length > 0)
 		cleanString = [cleanString stringByAppendingString:[aString substringWithRange:searchRange]];
 	
-	NSLog(@"==> go through all escapeSequences");
 	
-	NSUInteger iSequence;
-	for (iSequence = 0; iSequence < [escapeSequences count]; iSequence++)
+	NSLog(@"==> go through all formatCodes");
+	
+	NSUInteger iCode;
+	for (iCode = 0; iCode < [formatCodes count]; iCode++)
 	{
-		NSLog(@"--> %d of %d", iSequence, [escapeSequences count]-1);
+		NSLog(@"--> %d of %d", iCode, [formatCodes count]-1);
 		
-		NSDictionary *thisSequenceDict = [escapeSequences objectAtIndex:iSequence];
-		NSString *thisSequence = [thisSequenceDict objectForKey:@"sequence"];
-		NSUInteger formattingRunStartLocation = [[thisSequenceDict objectForKey:@"location"] unsignedIntegerValue];
+		NSDictionary *thisCodeDict = [formatCodes objectAtIndex:iCode];
+		unichar thisCode = [[thisCodeDict objectForKey:@"code"] unsignedIntValue];
+		NSUInteger formattingRunStartLocation = [[thisCodeDict objectForKey:@"location"] unsignedIntegerValue];
 		
 		// the attributed string attribute name for the formatting run introduced
-		// by this sequence
-		NSString *thisAttributeName = NSForegroundColorAttributeName;
+		// by this code
+		NSString *thisAttributeName = nil;
 		
 		// the attributed string attribute value for this formatting run introduced
-		// by this sequence
+		// by this code
 		NSObject *thisAttributeValue = nil;
 		
-		// list of all the sequences the occurrence of which would specify the end of
-		// the formatting run introduced by this sequence:
-		NSArray *thisEndSequences = kANSIEscapeFgEndSequences;
+		// set attribute name
+		switch(thisCode)
+		{
+			case kSGRCodeFgBlack:
+			case kSGRCodeFgRed:
+			case kSGRCodeFgGreen:
+			case kSGRCodeFgYellow:
+			case kSGRCodeFgBlue:
+			case kSGRCodeFgMagenta:
+			case kSGRCodeFgCyan:
+			case kSGRCodeFgWhite:
+				thisAttributeName = NSForegroundColorAttributeName;
+				break;
+			case kSGRCodeBgBlack:
+			case kSGRCodeBgRed:
+			case kSGRCodeBgGreen:
+			case kSGRCodeBgYellow:
+			case kSGRCodeBgBlue:
+			case kSGRCodeBgMagenta:
+			case kSGRCodeBgCyan:
+			case kSGRCodeBgWhite:
+				thisAttributeName = NSBackgroundColorAttributeName;
+				break;
+			case kSGRCodeIntensityBold:
+			case kSGRCodeIntensityNormal:
+				thisAttributeName = NSFontAttributeName;
+				break;
+			case kSGRCodeUnderlineSingle:
+			case kSGRCodeUnderlineDouble:
+				thisAttributeName = NSUnderlineStyleAttributeName;
+				break;
+			default:
+				continue;
+				break;
+		}
 		
-		if ([thisSequence isEqualToString:kANSIEscapeFgRed])
+		// set attribute value
+		switch(thisCode)
 		{
-			NSLog(@"  >> red at %d", formattingRunStartLocation);
-			thisAttributeValue = [NSColor redColor];
+			case kSGRCodeBgBlack:
+			case kSGRCodeFgBlack:
+				thisAttributeValue = [NSColor blackColor];
+				break;
+			case kSGRCodeBgRed:
+			case kSGRCodeFgRed:
+				thisAttributeValue = [NSColor redColor];
+				break;
+			case kSGRCodeBgGreen:
+			case kSGRCodeFgGreen:
+				thisAttributeValue = [NSColor greenColor];
+				break;
+			case kSGRCodeBgYellow:
+			case kSGRCodeFgYellow:
+				thisAttributeValue = [NSColor yellowColor];
+				break;
+			case kSGRCodeBgBlue:
+			case kSGRCodeFgBlue:
+				thisAttributeValue = [NSColor blueColor];
+				break;
+			case kSGRCodeBgMagenta:
+			case kSGRCodeFgMagenta:
+				thisAttributeValue = [NSColor magentaColor];
+				break;
+			case kSGRCodeBgCyan:
+			case kSGRCodeFgCyan:
+				thisAttributeValue = [NSColor cyanColor];
+				break;
+			case kSGRCodeBgWhite:
+			case kSGRCodeFgWhite:
+				thisAttributeValue = [NSColor whiteColor];
+				break;
+			case kSGRCodeIntensityBold:
+				{
+				NSFont *boldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSBoldFontMask];
+				thisAttributeValue = boldFont;
+				}
+				break;
+			case kSGRCodeIntensityNormal:
+				{
+				NSFont *unboldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSUnboldFontMask];
+				thisAttributeValue = unboldFont;
+				}
+				break;
+			case kSGRCodeUnderlineSingle:
+				thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleSingle];
+				break;
+			case kSGRCodeUnderlineDouble:
+				thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleDouble];
+				break;
 		}
-		else if ([thisSequence isEqualToString:kANSIEscapeFgBlue])
-		{
-			NSLog(@"  >> blue at %d", formattingRunStartLocation);
-			thisAttributeValue = [NSColor blueColor];
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeFgGreen])
-		{
-			NSLog(@"  >> green at %d", formattingRunStartLocation);
-			thisAttributeValue = [NSColor greenColor];
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeFgYellow])
-		{
-			NSLog(@"  >> yellow at %d", formattingRunStartLocation);
-			thisAttributeValue = [NSColor yellowColor];
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeFgCyan])
-		{
-			NSLog(@"  >> cyan at %d", formattingRunStartLocation);
-			thisAttributeValue = [NSColor cyanColor];
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeFgMagenta])
-		{
-			NSLog(@"  >> magenta at %d", formattingRunStartLocation);
-			thisAttributeValue = [NSColor magentaColor];
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeFgWhite])
-		{
-			NSLog(@"  >> white at %d", formattingRunStartLocation);
-			thisAttributeValue = [NSColor whiteColor];
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeBgRed])
-		{
-			NSLog(@"  >> redBg at %d", formattingRunStartLocation);
-			thisAttributeName = NSBackgroundColorAttributeName;
-			thisAttributeValue = [NSColor redColor];
-			thisEndSequences = kANSIEscapeBgEndSequences;
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeBgBlue])
-		{
-			NSLog(@"  >> blueBg at %d", formattingRunStartLocation);
-			thisAttributeName = NSBackgroundColorAttributeName;
-			thisAttributeValue = [NSColor blueColor];
-			thisEndSequences = kANSIEscapeBgEndSequences;
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeBgGreen])
-		{
-			NSLog(@"  >> greenBg at %d", formattingRunStartLocation);
-			thisAttributeName = NSBackgroundColorAttributeName;
-			thisAttributeValue = [NSColor greenColor];
-			thisEndSequences = kANSIEscapeBgEndSequences;
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeBgYellow])
-		{
-			NSLog(@"  >> yellowBg at %d", formattingRunStartLocation);
-			thisAttributeName = NSBackgroundColorAttributeName;
-			thisAttributeValue = [NSColor yellowColor];
-			thisEndSequences = kANSIEscapeBgEndSequences;
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeBgCyan])
-		{
-			NSLog(@"  >> cyanBg at %d", formattingRunStartLocation);
-			thisAttributeName = NSBackgroundColorAttributeName;
-			thisAttributeValue = [NSColor cyanColor];
-			thisEndSequences = kANSIEscapeBgEndSequences;
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeBgMagenta])
-		{
-			NSLog(@"  >> magentaBg at %d", formattingRunStartLocation);
-			thisAttributeName = NSBackgroundColorAttributeName;
-			thisAttributeValue = [NSColor magentaColor];
-			thisEndSequences = kANSIEscapeBgEndSequences;
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeBgWhite])
-		{
-			NSLog(@"  >> whiteBg at %d", formattingRunStartLocation);
-			thisAttributeName = NSBackgroundColorAttributeName;
-			thisAttributeValue = [NSColor whiteColor];
-			thisEndSequences = kANSIEscapeBgEndSequences;
-		}
-		else if ([thisSequence isEqualToString:kANSIEscapeIntensityBold])
-		{
-			NSLog(@"  >> bold at %d", formattingRunStartLocation);
-			thisAttributeName = NSFontAttributeName;
-			NSFont *boldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSBoldFontMask];
-			thisAttributeValue = boldFont;
-			thisEndSequences = kANSIEscapeIntensityEndSequences;
-		}
-		else
-		{
-			if ([thisSequence isEqualToString:kANSIEscapeAllReset])
-				NSLog(@"  >> reset at %d", formattingRunStartLocation);
-			else
-				NSLog(@"  >> NO FORMAT at %d", formattingRunStartLocation);
-			
-			// this ANSI escape sequence is either unrecognized or just
-			// doesn't begin any formatting runs, so we skip it
-			continue;
-		}
+		
+		
+		
 		
 		NSLog(@"  find end sequence...");
 		
 		// find the next sequence that specifies the end of this formatting run
 		NSInteger formattingRunEndLocation = -1;
-		if (iSequence < ([escapeSequences count]-1))
+		if (iCode < ([formatCodes count]-1))
 		{
-			NSUInteger iEndSequence;
-			NSDictionary *thisEndSequenceDict;
-			for (iEndSequence = iSequence+1; iEndSequence < [escapeSequences count]; iEndSequence++)
+			NSUInteger iEndCode;
+			NSDictionary *thisEndCodeCandidateDict;
+			unichar thisEndCodeCandidate;
+			for (iEndCode = iCode+1; iEndCode < [formatCodes count]; iEndCode++)
 			{
-				thisEndSequenceDict = [escapeSequences objectAtIndex:iEndSequence];
-				if ([thisEndSequences containsObject:[thisEndSequenceDict objectForKey:@"sequence"]])
+				thisEndCodeCandidateDict = [formatCodes objectAtIndex:iEndCode];
+				thisEndCodeCandidate = [[thisEndCodeCandidateDict objectForKey:@"code"] unsignedIntValue];
+				
+				BOOL endsFormattingRun = NO;
+				switch(thisCode)
 				{
-					formattingRunEndLocation = [[thisEndSequenceDict objectForKey:@"location"] unsignedIntegerValue];
+					case kSGRCodeFgBlack:
+					case kSGRCodeFgRed:
+					case kSGRCodeFgGreen:
+					case kSGRCodeFgYellow:
+					case kSGRCodeFgBlue:
+					case kSGRCodeFgMagenta:
+					case kSGRCodeFgCyan:
+					case kSGRCodeFgWhite:
+						endsFormattingRun = kCodeEndsFgFormatting(thisEndCodeCandidate);
+						break;
+					case kSGRCodeBgBlack:
+					case kSGRCodeBgRed:
+					case kSGRCodeBgGreen:
+					case kSGRCodeBgYellow:
+					case kSGRCodeBgBlue:
+					case kSGRCodeBgMagenta:
+					case kSGRCodeBgCyan:
+					case kSGRCodeBgWhite:
+						endsFormattingRun = kCodeEndsBgFormatting(thisEndCodeCandidate);
+						break;
+					case kSGRCodeIntensityBold:
+					case kSGRCodeIntensityNormal:
+						endsFormattingRun = kCodeEndsIntensityFormatting(thisEndCodeCandidate);
+						break;
+					case kSGRCodeUnderlineSingle:
+					case kSGRCodeUnderlineDouble:
+						endsFormattingRun = kCodeEndsUnderlineFormatting(thisEndCodeCandidate);
+						break;
+				}
+				
+				if (endsFormattingRun)
+				{
+					formattingRunEndLocation = [[thisEndCodeCandidateDict objectForKey:@"location"] unsignedIntegerValue];
 					break;
 				}
 			}
@@ -331,51 +404,6 @@
 
 
 
-
-
-
-- (NSRange) rangeOfOneOfStrings:(NSArray*)aStrings
-					   inString:(NSString*)aSubject
-						options:(NSStringCompareOptions)aOptions
-						  range:(NSRange)aRange
-{
-	NSRange firstRange = NSMakeRange(NSNotFound, 0);
-	
-	if (aStrings == nil || aSubject == nil || aRange.length == 0)
-		return firstRange;
-	
-	NSRange thisRange;
-	NSUInteger i;
-	for (i = 0; i < [aStrings count]; i++)
-	{
-		thisRange = [aSubject rangeOfString:[aStrings objectAtIndex:i] options:aOptions range:aRange];
-		if (thisRange.location != NSNotFound && (firstRange.location == NSNotFound || thisRange.location < firstRange.location))
-		{
-			firstRange.location = thisRange.location;
-			firstRange.length = thisRange.length;
-		}
-	}
-	return firstRange;
-}
-
-
-- (NSString*) stripEscapeSequencesFromString:(NSString*)aString
-{
-	if (aString == nil)
-		return nil;
-	if ([aString length] == 0)
-		return aString;
-	
-	NSString *cleanString = [NSString stringWithString:aString];
-	
-	NSArray *substringsToStrip = kAllANSIEscapeSequences;
-	NSUInteger i;
-	for (i = 0; i < [substringsToStrip count]; i++)
-	{
-		cleanString = [cleanString stringByReplacingOccurrencesOfString:[substringsToStrip objectAtIndex:i] withString:@""];
-	}
-	return cleanString;
-}
 
 
 @end

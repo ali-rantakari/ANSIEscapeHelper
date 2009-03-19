@@ -3,7 +3,14 @@
 #define kANSIEscapeReset 	"\033[0m"
 #define kANSIEscapeResetAlt	"\033[m"
 
-#define kANSIEscapeBold 	"\033[01m"
+#define kANSIEscapeItalic 	"\033[3m"
+
+#define kANSIEscapeUnderlineSingle 	"\033[4m"
+#define kANSIEscapeUnderlineDouble 	"\033[21m"
+#define kANSIEscapeUnderlineNone 	"\033[24m"
+
+#define kANSIEscapeBold 	"\033[1m"
+#define kANSIEscapeBoldOff 	"\033[22m"
 
 #define kANSIEscapeRed 		"\033[31m"
 #define kANSIEscapeGreen 	"\033[32m"
@@ -40,12 +47,12 @@ int main(int argc, char *argv[])
 	printf("%sgreen bg with %syellow fg%s still green bg%s bg reset\n", kANSIEscapeBgGreen, kANSIEscapeYellow, kANSIEscapeFgReset, kANSIEscapeBgReset);
 	printf("\n");
 	
-	printf("test alternative resets:\n");
+	printf("test alternative reset:\n");
 	printf("%sred and now...%sreset!\n", kANSIEscapeRed, kANSIEscapeResetAlt);
 	printf("\n");
 	
-	printf("blabla:\n");
-	printf("%sred and now...%sgreen!%s\n", kANSIEscapeRed, kANSIEscapeGreen, kANSIEscapeReset);
+	printf("bold and underline:\n");
+	printf("start underline:%shello i am %sdoubly%s underlined %sand bold%s, %soccasionally.%s sometimes not underlined anymore.%s\n", kANSIEscapeUnderlineSingle, kANSIEscapeUnderlineDouble, kANSIEscapeUnderlineSingle, kANSIEscapeBold, kANSIEscapeBoldOff, kANSIEscapeBlue, kANSIEscapeUnderlineNone, kANSIEscapeReset);
 	printf("\n");
 	
 	printf("And some normal text here.");
