@@ -32,71 +32,43 @@
 // (add your own CSI:Miami joke here)
 #define kANSIEscapeCSI			@"\033["
 
-// macro definitions for different SGR (Select Graphic Rendition)
-// control codes and for functions used to check whether the
-// occurrence of a given code would end a specific kind of formatting
-// run (e.g. foreground color, or underlining.)
+// default colors
+#define kDefaultANSIColorFgBlack	[NSColor blackColor]
+#define kDefaultANSIColorFgRed		[NSColor redColor]
+#define kDefaultANSIColorFgGreen	[NSColor greenColor]
+#define kDefaultANSIColorFgYellow	[NSColor yellowColor]
+#define kDefaultANSIColorFgBlue		[NSColor blueColor]
+#define kDefaultANSIColorFgMagenta	[NSColor magentaColor]
+#define kDefaultANSIColorFgCyan		[NSColor cyanColor]
+#define kDefaultANSIColorFgWhite	[NSColor whiteColor]
 
-#define kSGRCodeAllReset		0
+#define kDefaultANSIColorBgBlack	[NSColor blackColor]
+#define kDefaultANSIColorBgRed		[NSColor redColor]
+#define kDefaultANSIColorBgGreen	[NSColor greenColor]
+#define kDefaultANSIColorBgYellow	[NSColor yellowColor]
+#define kDefaultANSIColorBgBlue		[NSColor blueColor]
+#define kDefaultANSIColorBgMagenta	[NSColor magentaColor]
+#define kDefaultANSIColorBgCyan		[NSColor cyanColor]
+#define kDefaultANSIColorBgWhite	[NSColor whiteColor]
 
-#define kSGRCodeIntensityBold	1
-#define kSGRCodeIntensityFaint	2
-#define kSGRCodeIntensityNormal	22
-
-#define kCodeEndsIntensityFormatting(x)		(x == kSGRCodeAllReset || x == kSGRCodeIntensityNormal || \
-											 x == kSGRCodeIntensityBold || x == kSGRCodeIntensityFaint)
-
-#define kSGRCodeItalicOn		3
-
-#define kCodeEndsItalicFormatting(x)		(x == kSGRCodeAllReset || x == kSGRCodeItalicOn)
-
-
-#define kSGRCodeUnderlineSingle	4
-#define kSGRCodeUnderlineDouble	21
-#define kSGRCodeUnderlineNone	24
-
-#define kCodeEndsUnderlineFormatting(x)		(x == kSGRCodeAllReset || x == kSGRCodeUnderlineNone || \
-											 x == kSGRCodeUnderlineSingle || x == kSGRCodeUnderlineDouble)
-
-
-#define kSGRCodeFgBlack		30
-#define kSGRCodeFgRed		31
-#define kSGRCodeFgGreen		32
-#define kSGRCodeFgYellow	33
-#define kSGRCodeFgBlue		34
-#define kSGRCodeFgMagenta	35
-#define kSGRCodeFgCyan		36
-#define kSGRCodeFgWhite		37
-#define kSGRCodeFgReset		39
-
-#define kCodeEndsFgFormatting(x)	(x == kSGRCodeAllReset || x == kSGRCodeFgReset || \
-									 x == kSGRCodeFgBlack || x == kSGRCodeFgRed || \
-									 x == kSGRCodeFgGreen || x == kSGRCodeFgYellow || \
-									 x == kSGRCodeFgBlue || x == kSGRCodeFgMagenta || \
-									 x == kSGRCodeFgCyan || x == kSGRCodeFgWhite)
-
-
-#define kSGRCodeBgBlack		40
-#define kSGRCodeBgRed		41
-#define kSGRCodeBgGreen		42
-#define kSGRCodeBgYellow	43
-#define kSGRCodeBgBlue		44
-#define kSGRCodeBgMagenta	45
-#define kSGRCodeBgCyan		46
-#define kSGRCodeBgWhite		47
-#define kSGRCodeBgReset		49
-
-#define kCodeEndsBgFormatting(x)	(x == kSGRCodeAllReset || x == kSGRCodeBgReset || \
-									 x == kSGRCodeBgBlack || x == kSGRCodeBgRed || \
-									 x == kSGRCodeBgGreen || x == kSGRCodeBgYellow || \
-									 x == kSGRCodeBgBlue || x == kSGRCodeBgMagenta || \
-									 x == kSGRCodeBgCyan || x == kSGRCodeBgWhite)
 
 
 
 @implementation ANSIEscapeFormatter
 
-@synthesize font;
+@synthesize font, ansiColors;
+
+- (id) init
+{
+	self = [super init];
+	
+	// default font
+	self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+	
+	return self;
+}
+
+
 
 - (NSArray*) attributesForString:(NSString*)aString cleanString:(NSString**)aCleanString
 {
@@ -232,32 +204,32 @@
 		// set attribute name
 		switch(thisCode)
 		{
-			case kSGRCodeFgBlack:
-			case kSGRCodeFgRed:
-			case kSGRCodeFgGreen:
-			case kSGRCodeFgYellow:
-			case kSGRCodeFgBlue:
-			case kSGRCodeFgMagenta:
-			case kSGRCodeFgCyan:
-			case kSGRCodeFgWhite:
+			case SGRCodeFgBlack:
+			case SGRCodeFgRed:
+			case SGRCodeFgGreen:
+			case SGRCodeFgYellow:
+			case SGRCodeFgBlue:
+			case SGRCodeFgMagenta:
+			case SGRCodeFgCyan:
+			case SGRCodeFgWhite:
 				thisAttributeName = NSForegroundColorAttributeName;
 				break;
-			case kSGRCodeBgBlack:
-			case kSGRCodeBgRed:
-			case kSGRCodeBgGreen:
-			case kSGRCodeBgYellow:
-			case kSGRCodeBgBlue:
-			case kSGRCodeBgMagenta:
-			case kSGRCodeBgCyan:
-			case kSGRCodeBgWhite:
+			case SGRCodeBgBlack:
+			case SGRCodeBgRed:
+			case SGRCodeBgGreen:
+			case SGRCodeBgYellow:
+			case SGRCodeBgBlue:
+			case SGRCodeBgMagenta:
+			case SGRCodeBgCyan:
+			case SGRCodeBgWhite:
 				thisAttributeName = NSBackgroundColorAttributeName;
 				break;
-			case kSGRCodeIntensityBold:
-			case kSGRCodeIntensityNormal:
+			case SGRCodeIntensityBold:
+			case SGRCodeIntensityNormal:
 				thisAttributeName = NSFontAttributeName;
 				break;
-			case kSGRCodeUnderlineSingle:
-			case kSGRCodeUnderlineDouble:
+			case SGRCodeUnderlineSingle:
+			case SGRCodeUnderlineDouble:
 				thisAttributeName = NSUnderlineStyleAttributeName;
 				break;
 			default:
@@ -268,54 +240,40 @@
 		// set attribute value
 		switch(thisCode)
 		{
-			case kSGRCodeBgBlack:
-			case kSGRCodeFgBlack:
-				thisAttributeValue = [NSColor blackColor];
+			case SGRCodeBgBlack:
+			case SGRCodeFgBlack:
+			case SGRCodeBgRed:
+			case SGRCodeFgRed:
+			case SGRCodeBgGreen:
+			case SGRCodeFgGreen:
+			case SGRCodeBgYellow:
+			case SGRCodeFgYellow:
+			case SGRCodeBgBlue:
+			case SGRCodeFgBlue:
+			case SGRCodeBgMagenta:
+			case SGRCodeFgMagenta:
+			case SGRCodeBgCyan:
+			case SGRCodeFgCyan:
+			case SGRCodeBgWhite:
+			case SGRCodeFgWhite:
+				thisAttributeValue = [self colorForSGRCode:thisCode];
 				break;
-			case kSGRCodeBgRed:
-			case kSGRCodeFgRed:
-				thisAttributeValue = [NSColor redColor];
-				break;
-			case kSGRCodeBgGreen:
-			case kSGRCodeFgGreen:
-				thisAttributeValue = [NSColor greenColor];
-				break;
-			case kSGRCodeBgYellow:
-			case kSGRCodeFgYellow:
-				thisAttributeValue = [NSColor yellowColor];
-				break;
-			case kSGRCodeBgBlue:
-			case kSGRCodeFgBlue:
-				thisAttributeValue = [NSColor blueColor];
-				break;
-			case kSGRCodeBgMagenta:
-			case kSGRCodeFgMagenta:
-				thisAttributeValue = [NSColor magentaColor];
-				break;
-			case kSGRCodeBgCyan:
-			case kSGRCodeFgCyan:
-				thisAttributeValue = [NSColor cyanColor];
-				break;
-			case kSGRCodeBgWhite:
-			case kSGRCodeFgWhite:
-				thisAttributeValue = [NSColor whiteColor];
-				break;
-			case kSGRCodeIntensityBold:
+			case SGRCodeIntensityBold:
 				{
 				NSFont *boldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSBoldFontMask];
 				thisAttributeValue = boldFont;
 				}
 				break;
-			case kSGRCodeIntensityNormal:
+			case SGRCodeIntensityNormal:
 				{
 				NSFont *unboldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSUnboldFontMask];
 				thisAttributeValue = unboldFont;
 				}
 				break;
-			case kSGRCodeUnderlineSingle:
+			case SGRCodeUnderlineSingle:
 				thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleSingle];
 				break;
-			case kSGRCodeUnderlineDouble:
+			case SGRCodeUnderlineDouble:
 				thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleDouble];
 				break;
 		}
@@ -337,40 +295,7 @@
 				thisEndCodeCandidateDict = [formatCodes objectAtIndex:iEndCode];
 				thisEndCodeCandidate = [[thisEndCodeCandidateDict objectForKey:@"code"] unsignedIntValue];
 				
-				BOOL endsFormattingRun = NO;
-				switch(thisCode)
-				{
-					case kSGRCodeFgBlack:
-					case kSGRCodeFgRed:
-					case kSGRCodeFgGreen:
-					case kSGRCodeFgYellow:
-					case kSGRCodeFgBlue:
-					case kSGRCodeFgMagenta:
-					case kSGRCodeFgCyan:
-					case kSGRCodeFgWhite:
-						endsFormattingRun = kCodeEndsFgFormatting(thisEndCodeCandidate);
-						break;
-					case kSGRCodeBgBlack:
-					case kSGRCodeBgRed:
-					case kSGRCodeBgGreen:
-					case kSGRCodeBgYellow:
-					case kSGRCodeBgBlue:
-					case kSGRCodeBgMagenta:
-					case kSGRCodeBgCyan:
-					case kSGRCodeBgWhite:
-						endsFormattingRun = kCodeEndsBgFormatting(thisEndCodeCandidate);
-						break;
-					case kSGRCodeIntensityBold:
-					case kSGRCodeIntensityNormal:
-						endsFormattingRun = kCodeEndsIntensityFormatting(thisEndCodeCandidate);
-						break;
-					case kSGRCodeUnderlineSingle:
-					case kSGRCodeUnderlineDouble:
-						endsFormattingRun = kCodeEndsUnderlineFormatting(thisEndCodeCandidate);
-						break;
-				}
-				
-				if (endsFormattingRun)
+				if ([self sgrCode:thisEndCodeCandidate endsFormattingIntroducedByCode:thisCode])
 				{
 					formattingRunEndLocation = [[thisEndCodeCandidateDict objectForKey:@"location"] unsignedIntegerValue];
 					break;
@@ -402,6 +327,122 @@
 }
 
 
+
+
+
+- (BOOL) sgrCode:(enum sgrCode)endCode endsFormattingIntroducedByCode:(enum sgrCode)startCode
+{
+	switch(startCode)
+	{
+		case SGRCodeFgBlack:
+		case SGRCodeFgRed:
+		case SGRCodeFgGreen:
+		case SGRCodeFgYellow:
+		case SGRCodeFgBlue:
+		case SGRCodeFgMagenta:
+		case SGRCodeFgCyan:
+		case SGRCodeFgWhite:
+			return (endCode == SGRCodeAllReset || endCode == SGRCodeFgReset || 
+					endCode == SGRCodeFgBlack || endCode == SGRCodeFgRed || 
+					endCode == SGRCodeFgGreen || endCode == SGRCodeFgYellow || 
+					endCode == SGRCodeFgBlue || endCode == SGRCodeFgMagenta || 
+					endCode == SGRCodeFgCyan || endCode == SGRCodeFgWhite);
+			break;
+		case SGRCodeBgBlack:
+		case SGRCodeBgRed:
+		case SGRCodeBgGreen:
+		case SGRCodeBgYellow:
+		case SGRCodeBgBlue:
+		case SGRCodeBgMagenta:
+		case SGRCodeBgCyan:
+		case SGRCodeBgWhite:
+			return (endCode == SGRCodeAllReset || endCode == SGRCodeBgReset || 
+					endCode == SGRCodeBgBlack || endCode == SGRCodeBgRed || 
+					endCode == SGRCodeBgGreen || endCode == SGRCodeBgYellow || 
+					endCode == SGRCodeBgBlue || endCode == SGRCodeBgMagenta || 
+					endCode == SGRCodeBgCyan || endCode == SGRCodeBgWhite);
+			break;
+		case SGRCodeIntensityBold:
+		case SGRCodeIntensityNormal:
+			return (endCode == SGRCodeAllReset || endCode == SGRCodeIntensityNormal || 
+					endCode == SGRCodeIntensityBold || endCode == SGRCodeIntensityFaint);
+			break;
+		case SGRCodeUnderlineSingle:
+		case SGRCodeUnderlineDouble:
+			return (endCode == SGRCodeAllReset || endCode == SGRCodeUnderlineNone || 
+					endCode == SGRCodeUnderlineSingle || endCode == SGRCodeUnderlineDouble);
+			break;
+		default:
+			return NO;
+			break;
+	}
+	
+	return NO;
+}
+
+
+
+
+- (NSColor*) colorForSGRCode:(enum sgrCode)code
+{
+	NSColor *preferredColor = [self.ansiColors objectForKey:[NSNumber numberWithInt:code]];
+	if (preferredColor != nil)
+		return preferredColor;
+	
+	switch(code)
+	{
+		case SGRCodeFgBlack:
+			return kDefaultANSIColorFgBlack;
+			break;
+		case SGRCodeFgRed:
+			return kDefaultANSIColorFgRed;
+			break;
+		case SGRCodeFgGreen:
+			return kDefaultANSIColorFgGreen;
+			break;
+		case SGRCodeFgYellow:
+			return kDefaultANSIColorFgYellow;
+			break;
+		case SGRCodeFgBlue:
+			return kDefaultANSIColorFgBlue;
+			break;
+		case SGRCodeFgMagenta:
+			return kDefaultANSIColorFgMagenta;
+			break;
+		case SGRCodeFgCyan:
+			return kDefaultANSIColorFgCyan;
+			break;
+		case SGRCodeFgWhite:
+			return kDefaultANSIColorFgWhite;
+			break;
+		case SGRCodeBgBlack:
+			return kDefaultANSIColorBgBlack;
+			break;
+		case SGRCodeBgRed:
+			return kDefaultANSIColorBgRed;
+			break;
+		case SGRCodeBgGreen:
+			return kDefaultANSIColorBgGreen;
+			break;
+		case SGRCodeBgYellow:
+			return kDefaultANSIColorBgYellow;
+			break;
+		case SGRCodeBgBlue:
+			return kDefaultANSIColorBgBlue;
+			break;
+		case SGRCodeBgMagenta:
+			return kDefaultANSIColorBgMagenta;
+			break;
+		case SGRCodeBgCyan:
+			return kDefaultANSIColorBgCyan;
+			break;
+		case SGRCodeBgWhite:
+			return kDefaultANSIColorBgWhite;
+			break;
+	}
+	
+	return kDefaultANSIColorFgBlack;
+}
 
 
 
