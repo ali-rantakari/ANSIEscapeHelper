@@ -1,5 +1,5 @@
 //
-//  ANSIEscapeFormatter.m
+//  ANSIEscapeHelper.m
 //
 //  Created by Ali Rantakari on 18.3.09.
 //  Copyright 2009 Ali Rantakari. All rights reserved.
@@ -16,7 +16,7 @@
 
 
 
-#import "ANSIEscapeFormatter.h"
+#import "ANSIEscapeHelper.h"
 
 // the CSI (Control Sequence Initiator) -- i.e. "escape sequence prefix".
 // (add your own CSI:Miami joke here)
@@ -44,7 +44,7 @@
 
 
 
-@implementation ANSIEscapeFormatter
+@implementation ANSIEscapeHelper
 
 @synthesize font, ansiColors;
 

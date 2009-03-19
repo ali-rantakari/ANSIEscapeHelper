@@ -1,12 +1,12 @@
 #import <Cocoa/Cocoa.h>
-#import "ANSIEscapeFormatter.h"
+#import "ANSIEscapeHelper.h"
 
 @interface MyController : NSObject
 {
     IBOutlet NSButton *button;
     IBOutlet NSTextView *textView;
 	
-	ANSIEscapeFormatter *ansiFormatter;
+	ANSIEscapeHelper *ansiEscapeHelper;
 }
 
 - (IBAction) cProgramButtonPress:(id)sender;

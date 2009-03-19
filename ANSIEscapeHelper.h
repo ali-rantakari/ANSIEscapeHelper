@@ -1,5 +1,5 @@
 //
-//  ANSIEscapeFormatter.h
+//  ANSIEscapeHelper.h
 //  AnsiColorsTest
 //
 //  Created by Ali Rantakari on 18.3.09.
@@ -55,13 +55,13 @@ enum sgrCode
 
 
 /*!
- @class		ANSIEscapeFormatter
+ @class		ANSIEscapeHelper
  
  @abstract	Contains helper methods for dealing with strings
 			that contain ANSI escape sequences for formatting (colors,
 			underlining, bold etc.)
  */
-@interface ANSIEscapeFormatter : NSObject
+@interface ANSIEscapeHelper : NSObject
 {
 	NSFont *font;
 	NSMutableDictionary *ansiColors;

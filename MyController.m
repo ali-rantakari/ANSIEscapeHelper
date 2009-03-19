@@ -93,9 +93,9 @@
 	
 	NSString *cleanNewLinesString = nil;
 	
-	ansiFormatter = [[[ANSIEscapeFormatter alloc] init] autorelease];
+	ansiEscapeHelper = [[[ANSIEscapeHelper alloc] init] autorelease];
 	
-	// set colors to ansiFormatter
+	// set colors to ansiEscapeHelper
 	NSDictionary *colorPrefDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
 										   [NSNumber numberWithInt:SGRCodeFgBlack], kANSIColorPrefKey_FgBlack,
 										   [NSNumber numberWithInt:SGRCodeFgWhite], kANSIColorPrefKey_FgWhite,
@@ -124,14 +124,14 @@
 		if (colorData != nil)
 		{
 			NSColor *thisColor = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
-			[[ansiFormatter ansiColors] setObject:thisColor forKey:[colorPrefDefaults objectForKey:thisPrefName]];
+			[[ansiEscapeHelper ansiColors] setObject:thisColor forKey:[colorPrefDefaults objectForKey:thisPrefName]];
 		}
 	}
 	
 	
-	[ansiFormatter setFont:[textView font]];
+	[ansiEscapeHelper setFont:[textView font]];
 	
-	NSArray *formatsAndRanges = [ansiFormatter attributesForString:string cleanString:&cleanNewLinesString];
+	NSArray *formatsAndRanges = [ansiEscapeHelper attributesForString:string cleanString:&cleanNewLinesString];
 	
 	NSLog(@"======");
 	NSLog(@"set clean string to textView");
