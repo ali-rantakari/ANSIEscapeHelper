@@ -81,7 +81,9 @@ enum sgrCode
  
  @discussion	Keys in this dictionary should be NSNumber objects containing SGR code
 				values from the sgrCode enum. The corresponding values for these keys
-				should be NSColor objects.
+				should be NSColor objects. If this property is nil or if it doesn't
+				contain a key for a specific SGR code, the default color will be used
+				instead.
  */
 @property(retain) NSMutableDictionary *ansiColors;
 
@@ -127,5 +129,16 @@ enum sgrCode
  */
 - (BOOL) sgrCode:(enum sgrCode)endCode endsFormattingIntroducedByCode:(enum sgrCode)startCode;
 
+
+/*!
+ @method		colorForSGRCode:
+ 
+ @abstract		Returns the color to use for displaying a specific ANSI color.
+ 
+ @param code	An SGR code that specifies an ANSI color.
+ 
+ @result		The color to use for displaying the ANSI color specified by code.
+ */
+- (NSColor*) colorForSGRCode:(enum sgrCode)code;
 
 @end

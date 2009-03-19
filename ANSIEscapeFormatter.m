@@ -268,7 +268,7 @@
 			case SGRCodeFgCyan:
 			case SGRCodeBgWhite:
 			case SGRCodeFgWhite:
-				thisAttributeValue = [self.ansiColors objectForKey:[NSNumber numberWithInt:thisCode]];
+				thisAttributeValue = [self colorForSGRCode:thisCode];
 				break;
 			case SGRCodeIntensityBold:
 				{
@@ -392,6 +392,72 @@
 	return NO;
 }
 
+
+
+
+- (NSColor*) colorForSGRCode:(enum sgrCode)code
+{
+	if (self.ansiColors != nil)
+	{
+		NSColor *preferredColor = [self.ansiColors objectForKey:[NSNumber numberWithInt:code]];
+		if (preferredColor != nil)
+			return preferredColor;
+	}
+	
+	switch(code)
+	{
+		case SGRCodeFgBlack:
+			return kDefaultANSIColorFgBlack;
+			break;
+		case SGRCodeFgRed:
+			return kDefaultANSIColorFgRed;
+			break;
+		case SGRCodeFgGreen:
+			return kDefaultANSIColorFgGreen;
+			break;
+		case SGRCodeFgYellow:
+			return kDefaultANSIColorFgYellow;
+			break;
+		case SGRCodeFgBlue:
+			return kDefaultANSIColorFgBlue;
+			break;
+		case SGRCodeFgMagenta:
+			return kDefaultANSIColorFgMagenta;
+			break;
+		case SGRCodeFgCyan:
+			return kDefaultANSIColorFgCyan;
+			break;
+		case SGRCodeFgWhite:
+			return kDefaultANSIColorFgWhite;
+			break;
+		case SGRCodeBgBlack:
+			return kDefaultANSIColorBgBlack;
+			break;
+		case SGRCodeBgRed:
+			return kDefaultANSIColorBgRed;
+			break;
+		case SGRCodeBgGreen:
+			return kDefaultANSIColorBgGreen;
+			break;
+		case SGRCodeBgYellow:
+			return kDefaultANSIColorBgYellow;
+			break;
+		case SGRCodeBgBlue:
+			return kDefaultANSIColorBgBlue;
+			break;
+		case SGRCodeBgMagenta:
+			return kDefaultANSIColorBgMagenta;
+			break;
+		case SGRCodeBgCyan:
+			return kDefaultANSIColorBgCyan;
+			break;
+		case SGRCodeBgWhite:
+			return kDefaultANSIColorBgWhite;
+			break;
+	}
+	
+	return kDefaultANSIColorFgBlack;
+}
 
 
 
