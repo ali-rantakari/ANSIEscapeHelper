@@ -9,8 +9,6 @@
 /*
  todo:
  
- - add public properties for the different ANSI colors (separately for fg and bg colors)
- - add "test prefs window" for setting the ANSI colors
  - optimize. it would be nice if this was faster.
  - write & generate proper API documentation
  
