@@ -57,7 +57,25 @@
 	// default font
 	self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
 	
-	self.ansiColors = [NSMutableDictionary dictionary];
+	// default ANSI colors
+	self.ansiColors = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+					   kDefaultANSIColorFgBlack, 	[NSNumber numberWithInt:SGRCodeFgBlack],
+					   kDefaultANSIColorFgWhite, 	[NSNumber numberWithInt:SGRCodeFgWhite],
+					   kDefaultANSIColorFgRed,		[NSNumber numberWithInt:SGRCodeFgRed],
+					   kDefaultANSIColorFgGreen, 	[NSNumber numberWithInt:SGRCodeFgGreen],
+					   kDefaultANSIColorFgYellow, 	[NSNumber numberWithInt:SGRCodeFgYellow],
+					   kDefaultANSIColorFgBlue, 	[NSNumber numberWithInt:SGRCodeFgBlue],
+					   kDefaultANSIColorFgMagenta,	[NSNumber numberWithInt:SGRCodeFgMagenta],
+					   kDefaultANSIColorFgCyan, 	[NSNumber numberWithInt:SGRCodeFgCyan],
+					   kDefaultANSIColorBgBlack, 	[NSNumber numberWithInt:SGRCodeBgBlack],
+					   kDefaultANSIColorBgWhite, 	[NSNumber numberWithInt:SGRCodeBgWhite],
+					   kDefaultANSIColorBgRed,		[NSNumber numberWithInt:SGRCodeBgRed],
+					   kDefaultANSIColorBgGreen, 	[NSNumber numberWithInt:SGRCodeBgGreen],
+					   kDefaultANSIColorBgYellow, 	[NSNumber numberWithInt:SGRCodeBgYellow],
+					   kDefaultANSIColorBgBlue, 	[NSNumber numberWithInt:SGRCodeBgBlue],
+					   kDefaultANSIColorBgMagenta,	[NSNumber numberWithInt:SGRCodeBgMagenta],
+					   kDefaultANSIColorBgCyan, 	[NSNumber numberWithInt:SGRCodeBgCyan],
+					   nil];
 	
 	return self;
 }
@@ -250,7 +268,7 @@
 			case SGRCodeFgCyan:
 			case SGRCodeBgWhite:
 			case SGRCodeFgWhite:
-				thisAttributeValue = [self colorForSGRCode:thisCode];
+				thisAttributeValue = [self.ansiColors objectForKey:[NSNumber numberWithInt:thisCode]];
 				break;
 			case SGRCodeIntensityBold:
 				{
@@ -374,69 +392,6 @@
 	return NO;
 }
 
-
-
-
-- (NSColor*) colorForSGRCode:(enum sgrCode)code
-{
-	NSColor *preferredColor = [self.ansiColors objectForKey:[NSNumber numberWithInt:code]];
-	if (preferredColor != nil)
-		return preferredColor;
-	
-	switch(code)
-	{
-		case SGRCodeFgBlack:
-			return kDefaultANSIColorFgBlack;
-			break;
-		case SGRCodeFgRed:
-			return kDefaultANSIColorFgRed;
-			break;
-		case SGRCodeFgGreen:
-			return kDefaultANSIColorFgGreen;
-			break;
-		case SGRCodeFgYellow:
-			return kDefaultANSIColorFgYellow;
-			break;
-		case SGRCodeFgBlue:
-			return kDefaultANSIColorFgBlue;
-			break;
-		case SGRCodeFgMagenta:
-			return kDefaultANSIColorFgMagenta;
-			break;
-		case SGRCodeFgCyan:
-			return kDefaultANSIColorFgCyan;
-			break;
-		case SGRCodeFgWhite:
-			return kDefaultANSIColorFgWhite;
-			break;
-		case SGRCodeBgBlack:
-			return kDefaultANSIColorBgBlack;
-			break;
-		case SGRCodeBgRed:
-			return kDefaultANSIColorBgRed;
-			break;
-		case SGRCodeBgGreen:
-			return kDefaultANSIColorBgGreen;
-			break;
-		case SGRCodeBgYellow:
-			return kDefaultANSIColorBgYellow;
-			break;
-		case SGRCodeBgBlue:
-			return kDefaultANSIColorBgBlue;
-			break;
-		case SGRCodeBgMagenta:
-			return kDefaultANSIColorBgMagenta;
-			break;
-		case SGRCodeBgCyan:
-			return kDefaultANSIColorBgCyan;
-			break;
-		case SGRCodeBgWhite:
-			return kDefaultANSIColorBgWhite;
-			break;
-	}
-	
-	return kDefaultANSIColorFgBlack;
-}
 
 
 

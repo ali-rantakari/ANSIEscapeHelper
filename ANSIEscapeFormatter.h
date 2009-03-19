@@ -128,15 +128,4 @@ enum sgrCode
 - (BOOL) sgrCode:(enum sgrCode)endCode endsFormattingIntroducedByCode:(enum sgrCode)startCode;
 
 
-/*!
- @method		colorForSGRCode:
- 
- @abstract		Returns the color to use for displaying a specific ANSI color.
- 
- @param code	An SGR code that specifies an ANSI color.
- 
- @result		The color to use for displaying the ANSI color specified by code.
- */
-- (NSColor*) colorForSGRCode:(enum sgrCode)code;
-
 @end
