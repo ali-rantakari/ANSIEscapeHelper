@@ -1,6 +1,23 @@
 #import "MyController.h"
 
 
+#define kANSIColorPrefKey_FgBlack	@"ansiColorsFgBlack"
+#define kANSIColorPrefKey_FgWhite	@"ansiColorsFgWhite"
+#define kANSIColorPrefKey_FgRed		@"ansiColorsFgRed"
+#define kANSIColorPrefKey_FgGreen	@"ansiColorsFgGreen"
+#define kANSIColorPrefKey_FgYellow	@"ansiColorsFgYellow"
+#define kANSIColorPrefKey_FgBlue	@"ansiColorsFgBlue"
+#define kANSIColorPrefKey_FgMagenta	@"ansiColorsFgMagenta"
+#define kANSIColorPrefKey_FgCyan	@"ansiColorsFgCyan"
+#define kANSIColorPrefKey_BgBlack	@"ansiColorsBgBlack"
+#define kANSIColorPrefKey_BgWhite	@"ansiColorsBgWhite"
+#define kANSIColorPrefKey_BgRed		@"ansiColorsBgRed"
+#define kANSIColorPrefKey_BgGreen	@"ansiColorsBgGreen"
+#define kANSIColorPrefKey_BgYellow	@"ansiColorsBgYellow"
+#define kANSIColorPrefKey_BgBlue	@"ansiColorsBgBlue"
+#define kANSIColorPrefKey_BgMagenta	@"ansiColorsBgMagenta"
+#define kANSIColorPrefKey_BgCyan	@"ansiColorsBgCyan"
+
 
 @implementation MyController
 
@@ -30,9 +47,16 @@
 	[self showString:newLinesString];
 }
 
+- (IBAction) oneCharPerlScriptButtonPress:(id)sender
+{
+	NSString *newLinesString = [self runTaskWithPath:[[NSBundle mainBundle] pathForResource:@"test-onechar" ofType:@"pl"] withArgs:[NSArray array]];
+	[self showString:newLinesString];
+}
+
 
 - (void) showString:(NSString*)string
 {
+	// clean all attributes
 	NSArray *attrs = [NSArray arrayWithObjects:
 					  NSFontAttributeName,
 					  NSParagraphStyleAttributeName,
@@ -65,10 +89,48 @@
 		[[textView textStorage] removeAttribute:attr range:fullRange];
 	}
 	
+	
+	
 	NSString *cleanNewLinesString = nil;
 	
 	ansiFormatter = [[[ANSIEscapeFormatter alloc] init] autorelease];
+	
+	// set colors to ansiFormatter
+	NSDictionary *colorPrefDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
+										   [NSNumber numberWithInt:SGRCodeFgBlack], kANSIColorPrefKey_FgBlack,
+										   [NSNumber numberWithInt:SGRCodeFgWhite], kANSIColorPrefKey_FgWhite,
+										   [NSNumber numberWithInt:SGRCodeFgRed], kANSIColorPrefKey_FgRed,
+										   [NSNumber numberWithInt:SGRCodeFgGreen], kANSIColorPrefKey_FgGreen,
+										   [NSNumber numberWithInt:SGRCodeFgYellow], kANSIColorPrefKey_FgYellow,
+										   [NSNumber numberWithInt:SGRCodeFgBlue], kANSIColorPrefKey_FgBlue,
+										   [NSNumber numberWithInt:SGRCodeFgMagenta], kANSIColorPrefKey_FgMagenta,
+										   [NSNumber numberWithInt:SGRCodeFgCyan], kANSIColorPrefKey_FgCyan,
+										   [NSNumber numberWithInt:SGRCodeBgBlack], kANSIColorPrefKey_BgBlack,
+										   [NSNumber numberWithInt:SGRCodeBgWhite], kANSIColorPrefKey_BgWhite,
+										   [NSNumber numberWithInt:SGRCodeBgRed], kANSIColorPrefKey_BgRed,
+										   [NSNumber numberWithInt:SGRCodeBgGreen], kANSIColorPrefKey_BgGreen,
+										   [NSNumber numberWithInt:SGRCodeBgYellow], kANSIColorPrefKey_BgYellow,
+										   [NSNumber numberWithInt:SGRCodeBgBlue], kANSIColorPrefKey_BgBlue,
+										   [NSNumber numberWithInt:SGRCodeBgMagenta], kANSIColorPrefKey_BgMagenta,
+										   [NSNumber numberWithInt:SGRCodeBgCyan], kANSIColorPrefKey_BgCyan,
+										   nil];
+	NSUInteger iColorPrefDefaultsKey;
+	NSData *colorData;
+	NSString *thisPrefName;
+	for (iColorPrefDefaultsKey = 0; iColorPrefDefaultsKey < [[colorPrefDefaults allKeys] count]; iColorPrefDefaultsKey++)
+	{
+		thisPrefName = [[colorPrefDefaults allKeys] objectAtIndex:iColorPrefDefaultsKey];
+		colorData = [[NSUserDefaults standardUserDefaults] dataForKey:thisPrefName];
+		if (colorData != nil)
+		{
+			NSColor *thisColor = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+			[[ansiFormatter ansiColors] setObject:thisColor forKey:[colorPrefDefaults objectForKey:thisPrefName]];
+		}
+	}
+	
+	
 	[ansiFormatter setFont:[textView font]];
+	
 	NSArray *formatsAndRanges = [ansiFormatter attributesForString:string cleanString:&cleanNewLinesString];
 	
 	NSLog(@"======");

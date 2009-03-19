@@ -11,6 +11,7 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		C91DC0170F72938E006C7A67 /* test-onechar.pl in Resources */ = {isa = PBXBuildFile; fileRef = C91DC0160F72938E006C7A67 /* test-onechar.pl */; };
 		C926C7960F7136220057A11E /* MyController.m in Sources */ = {isa = PBXBuildFile; fileRef = C926C7940F7136220057A11E /* MyController.m */; };
 		C926C8850F715CFB0057A11E /* a.out in Resources */ = {isa = PBXBuildFile; fileRef = C926C8840F715CFB0057A11E /* a.out */; };
 		C9FB759B0F718745009BA734 /* ANSIEscapeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FB759A0F718745009BA734 /* ANSIEscapeFormatter.m */; };
@@ -28,6 +29,7 @@
 		32CA4F630368D1EE00C91783 /* AnsiColorsTest_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnsiColorsTest_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* AnsiColorsTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnsiColorsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C91DC0160F72938E006C7A67 /* test-onechar.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "test-onechar.pl"; sourceTree = "<group>"; };
 		C926C7940F7136220057A11E /* MyController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyController.m; sourceTree = "<group>"; };
 		C926C7950F7136220057A11E /* MyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyController.h; sourceTree = "<group>"; };
 		C926C8840F715CFB0057A11E /* a.out */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = a.out; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C91DC0160F72938E006C7A67 /* test-onechar.pl */,
 				C9FB76BC0F71AC3A009BA734 /* test.pl */,
 				C926C8840F715CFB0057A11E /* a.out */,
 				8D1107310486CEB800E47090 /* Info.plist */,
@@ -174,6 +177,7 @@
 				1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */,
 				C926C8850F715CFB0057A11E /* a.out in Resources */,
 				C9FB76BD0F71AC3A009BA734 /* test.pl in Resources */,
+				C91DC0170F72938E006C7A67 /* test-onechar.pl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

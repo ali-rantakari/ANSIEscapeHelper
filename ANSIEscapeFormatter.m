@@ -4,14 +4,6 @@
 //  Created by Ali Rantakari on 18.3.09.
 //  Copyright 2009 Ali Rantakari. All rights reserved.
 //  
-//  Description:
-//  ---------------
-//  Contains helper methods for dealing with strings
-//  that contain ANSI escape sequences for formatting
-//  (like colors etc.) Not optimized for speed or
-//  anything but should be ok enough for most
-//  purposes.
-//  
 // todo: add license!
 
 /*
@@ -64,6 +56,8 @@
 	
 	// default font
 	self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+	
+	self.ansiColors = [NSMutableDictionary dictionary];
 	
 	return self;
 }

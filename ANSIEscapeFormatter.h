@@ -9,8 +9,11 @@
 #import <Cocoa/Cocoa.h>
 
 
-
-// SGR (Select Graphic Rendition) control codes
+/*!
+ @enum			sgrCode
+ 
+ @abstract		SGR (Select Graphic Rendition) ANSI control codes.
+ */
 enum sgrCode
 {
 	SGRCodeAllReset =			0,
@@ -64,14 +67,29 @@ enum sgrCode
 	NSMutableDictionary *ansiColors;
 }
 
+/*!
+ @property		font
+ 
+ @abstract		The font to use when creating string formatting attribute values.
+ */
 @property(retain) NSFont *font;
+
+/*!
+ @property		ansiColors
+ 
+ @abstract		The colors to use for displaying ANSI colors.
+ 
+ @discussion	Keys in this dictionary should be NSNumber objects containing SGR code
+				values from the sgrCode enum. The corresponding values for these keys
+				should be NSColor objects.
+ */
 @property(retain) NSMutableDictionary *ansiColors;
 
 
 /*!
  @method		attributesForString:cleanString:
  
- @abstract		Convert ANSI escape sequences in a string to string formatting attributes
+ @abstract		Convert ANSI escape sequences in a string to string formatting attributes.
  
  @discussion	Given a string with some ANSI escape sequences in it, this method returns
 				attributes for formatting the specified string according to those ANSI
@@ -116,6 +134,8 @@ enum sgrCode
  @abstract		Returns the color to use for displaying a specific ANSI color.
  
  @param code	An SGR code that specifies an ANSI color.
+ 
+ @result		The color to use for displaying the ANSI color specified by code.
  */
 - (NSColor*) colorForSGRCode:(enum sgrCode)code;
 
