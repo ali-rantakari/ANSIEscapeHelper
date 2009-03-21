@@ -13,3 +13,4 @@ print ON_YELLOW, BLUE, "blue on yellow go sweden :)", ON_BLUE, WHITE, " okay let
 
 print "\n";
 
+print RED, "red.";

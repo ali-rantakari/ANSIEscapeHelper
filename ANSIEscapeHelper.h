@@ -9,6 +9,16 @@
 #import <Cocoa/Cocoa.h>
 
 
+// the CSI (Control Sequence Initiator) -- i.e. "escape sequence prefix".
+// (add your own CSI:Miami joke here)
+#define kANSIEscapeCSI			@"\033["
+
+// the end byte of an SGR (Select Graphic Rendition)
+// ANSI Escape Sequence
+#define kANSIEscapeSGREnd		@"m"
+
+
+
 /*!
  @enum			sgrCode
  
@@ -16,6 +26,8 @@
  */
 enum sgrCode
 {
+	SGRCodeNoneOrInvalid =		-1,
+	
 	SGRCodeAllReset =			0,
 	
 	SGRCodeIntensityBold =		1,
@@ -86,6 +98,65 @@ enum sgrCode
 				instead.
  */
 @property(retain) NSMutableDictionary *ansiColors;
+
+
+/*!
+ @method		attributedStringWithANSIEscapedString:
+ 
+ @abstract		
+ 
+ @discussion	
+ 
+ @param aString			A String containing ANSI escape sequences
+ 
+ @result		
+ */
+- (NSMutableAttributedString*) attributedStringWithANSIEscapedString:(NSString*)aString;
+
+
+/*!
+ @method		ansiEscapedStringWithAttributedString:
+ 
+ @abstract		
+ 
+ @discussion	
+ 
+ @param aAttributedString		
+ 
+ @result		
+ */
+- (NSString*) ansiEscapedStringWithAttributedString:(NSAttributedString*)aAttributedString;
+
+
+/*!
+ @method		escapeCodesForString:cleanString:
+ 
+ @abstract		
+ 
+ @discussion	
+ 
+ @param aString			A String containing ANSI escape sequences
+ @param aCleanString	Upon return, contains a "clean" version of aString (i.e. aString
+						without the ANSI escape sequences)
+ 
+ @result		
+ */
+- (NSArray*) escapeCodesForString:(NSString*)aString cleanString:(NSString**)aCleanString;
+
+
+/*!
+ @method		ansiFormattedStringWithCodesAndLocations:cleanString:
+ 
+ @abstract		
+ 
+ @discussion	
+ 
+ @param aCodesArray		
+ @param aCleanString	
+ 
+ @result		
+ */
+- (NSString*) ansiFormattedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString;
 
 
 /*!

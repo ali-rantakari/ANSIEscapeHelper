@@ -16,9 +16,6 @@
 
 #import "ANSIEscapeHelper.h"
 
-// the CSI (Control Sequence Initiator) -- i.e. "escape sequence prefix".
-// (add your own CSI:Miami joke here)
-#define kANSIEscapeCSI			@"\033["
 
 // default colors
 #define kDefaultANSIColorFgBlack	[NSColor blackColor]
@@ -39,8 +36,8 @@
 #define kDefaultANSIColorBgCyan		[NSColor cyanColor]
 #define kDefaultANSIColorBgWhite	[NSColor whiteColor]
 
-// dictionary keys for the SGR code dictionaries we'll use below
-// in attributesForString:cleanString:
+// dictionary keys for the SGR code dictionaries that the array
+// escapeCodesForString:cleanString: returns contains
 #define kCodeDictKey_code		@"code"
 #define kCodeDictKey_location	@"location"
 
@@ -71,7 +68,36 @@
 
 
 
-- (NSArray*) attributesForString:(NSString*)aString cleanString:(NSString**)aCleanString
+- (NSMutableAttributedString*) attributedStringWithANSIEscapedString:(NSString*)aString
+{
+	if (aString == nil)
+		return nil;
+	
+	NSString *cleanString;
+	NSArray *attributesAndRanges = [self attributesForString:aString cleanString:&cleanString];
+	NSMutableAttributedString *attributedString = [[[NSMutableAttributedString alloc] initWithString:cleanString] autorelease];
+	
+	NSDictionary *thisAttributeDict;
+	for (thisAttributeDict in attributesAndRanges)
+	{
+		[attributedString
+		 addAttribute:[thisAttributeDict objectForKey:@"attributeName"]
+		 value:[thisAttributeDict objectForKey:@"attributeValue"]
+		 range:[[thisAttributeDict objectForKey:@"range"] rangeValue]
+		 ];
+	}
+	
+	return attributedString;
+}
+
+
+- (NSString*) ansiEscapedStringWithAttributedString:(NSAttributedString*)aAttributedString;
+{
+	return nil;
+}
+
+
+- (NSArray*) escapeCodesForString:(NSString*)aString cleanString:(NSString**)aCleanString
 {
 	if (aString == nil)
 		return nil;
@@ -81,7 +107,6 @@
 		return [NSArray array];
 	}
 	
-	NSMutableArray *attrsAndRanges = [NSMutableArray array];
 	NSString *cleanString = @"";
 	
 	// find all escape sequence codes from aString and put them in this array
@@ -171,6 +196,71 @@
 	if (searchRange.length > 0)
 		cleanString = [cleanString stringByAppendingString:[aString substringWithRange:searchRange]];
 	
+	*aCleanString = cleanString;
+	
+	return formatCodes;
+}
+
+
+
+
+- (NSString*) ansiFormattedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString
+{
+	NSString* retStr = @"";
+	
+	NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:kCodeDictKey_location ascending:YES] autorelease];
+	NSArray *codesArray = [aCodesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+	
+	NSUInteger aCleanStringIndex = 0;
+	NSUInteger aCleanStringLength = [aCleanString length];
+	NSDictionary *thisCodeDict;
+	for (thisCodeDict in codesArray)
+	{
+		if (!(	[[thisCodeDict allKeys] containsObject:kCodeDictKey_code] &&
+				[[thisCodeDict allKeys] containsObject:kCodeDictKey_location]
+			))
+			continue;
+		
+		enum sgrCode thisCode = [[thisCodeDict objectForKey:kCodeDictKey_code] unsignedIntValue];
+		NSUInteger formattingRunStartLocation = [[thisCodeDict objectForKey:kCodeDictKey_location] unsignedIntegerValue];
+		
+		if (formattingRunStartLocation > aCleanStringLength)
+			continue;
+		
+		if (aCleanStringIndex < formattingRunStartLocation)
+			retStr = [retStr stringByAppendingString:[aCleanString substringWithRange:NSMakeRange(aCleanStringIndex, formattingRunStartLocation-aCleanStringIndex)]];
+		retStr = [retStr stringByAppendingString:kANSIEscapeCSI];
+		retStr = [retStr stringByAppendingString:[NSString stringWithFormat:@"%d", thisCode]];
+		retStr = [retStr stringByAppendingString:kANSIEscapeSGREnd];
+		
+		aCleanStringIndex = formattingRunStartLocation;
+	}
+	
+	if (aCleanStringIndex < aCleanStringLength)
+		retStr = [retStr stringByAppendingString:[aCleanString substringFromIndex:aCleanStringIndex]];
+	
+	return retStr;
+}
+
+
+
+
+
+- (NSArray*) attributesForString:(NSString*)aString cleanString:(NSString**)aCleanString
+{
+	if (aString == nil)
+		return nil;
+	if ([aString length] <= [kANSIEscapeCSI length])
+	{
+		*aCleanString = [NSString stringWithString:aString];
+		return [NSArray array];
+	}
+	
+	NSMutableArray *attrsAndRanges = [NSMutableArray array];
+	
+	NSString *cleanString;
+	
+	NSArray *formatCodes = [self escapeCodesForString:aString cleanString:&cleanString];
 	
 	// go through all the found escape sequence codes and for each one, create
 	// the string formatting attribute name and value, find the next escape
@@ -181,7 +271,7 @@
 	for (iCode = 0; iCode < [formatCodes count]; iCode++)
 	{
 		NSDictionary *thisCodeDict = [formatCodes objectAtIndex:iCode];
-		unichar thisCode = [[thisCodeDict objectForKey:kCodeDictKey_code] unsignedIntValue];
+		enum sgrCode thisCode = [[thisCodeDict objectForKey:kCodeDictKey_code] unsignedIntValue];
 		NSUInteger formattingRunStartLocation = [[thisCodeDict objectForKey:kCodeDictKey_location] unsignedIntegerValue];
 		
 		// the attributed string attribute name for the formatting run introduced
@@ -267,6 +357,8 @@
 			case SGRCodeUnderlineDouble:
 				thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleDouble];
 				break;
+			default:
+				break;
 		}
 		
 		
@@ -290,7 +382,7 @@
 			}
 		}
 		if (formattingRunEndLocation == -1)
-			formattingRunEndLocation = aStringLength;
+			formattingRunEndLocation = [cleanString length];
 		
 		// add attribute name, attribute value and formatting run range
 		// to the array we're going to return
@@ -424,6 +516,8 @@
 			break;
 		case SGRCodeBgWhite:
 			return kDefaultANSIColorBgWhite;
+			break;
+		default:
 			break;
 	}
 	

@@ -56,46 +56,9 @@
 
 - (void) showString:(NSString*)string
 {
-	// clean all attributes
-	NSArray *attrs = [NSArray arrayWithObjects:
-					  NSFontAttributeName,
-					  NSParagraphStyleAttributeName,
-					  NSForegroundColorAttributeName,
-					  NSUnderlineStyleAttributeName,
-					  NSSuperscriptAttributeName,
-					  NSBackgroundColorAttributeName,
-					  NSAttachmentAttributeName,
-					  NSLigatureAttributeName,
-					  NSBaselineOffsetAttributeName,
-					  NSKernAttributeName,
-					  NSLinkAttributeName,
-					  NSStrokeWidthAttributeName,
-					  NSStrokeColorAttributeName,
-					  NSUnderlineColorAttributeName,
-					  NSStrikethroughStyleAttributeName,
-					  NSStrikethroughColorAttributeName,
-					  NSShadowAttributeName,
-					  NSObliquenessAttributeName,
-					  NSExpansionAttributeName,
-					  NSCursorAttributeName,
-					  NSToolTipAttributeName,
-					  NSMarkedClauseSegmentAttributeName,
-					  nil
-					  ];
-	NSString *attr;
-	NSRange fullRange = NSMakeRange(0, [[textView string] length]);
-	for (attr in attrs)
-	{
-		[[textView textStorage] removeAttribute:attr range:fullRange];
-	}
-	
-	
-	
-	NSString *cleanNewLinesString = nil;
-	
 	ansiEscapeHelper = [[[ANSIEscapeHelper alloc] init] autorelease];
 	
-	// set colors to ansiEscapeHelper
+	// set colors & font to use to ansiEscapeHelper
 	NSDictionary *colorPrefDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
 										   [NSNumber numberWithInt:SGRCodeFgBlack], kANSIColorPrefKey_FgBlack,
 										   [NSNumber numberWithInt:SGRCodeFgWhite], kANSIColorPrefKey_FgWhite,
@@ -127,30 +90,11 @@
 			[[ansiEscapeHelper ansiColors] setObject:thisColor forKey:[colorPrefDefaults objectForKey:thisPrefName]];
 		}
 	}
-	
-	
 	[ansiEscapeHelper setFont:[textView font]];
 	
-	NSArray *formatsAndRanges = [ansiEscapeHelper attributesForString:string cleanString:&cleanNewLinesString];
-	
-	NSLog(@"======");
-	NSLog(@"set clean string to textView");
-	
-	[textView setString:cleanNewLinesString];
-	
-	NSLog(@"set attributes to textStorage");
-	
-	NSDictionary *thisFormatRange;
-	unsigned int iFormatRange;
-	for (iFormatRange = 0; iFormatRange < [formatsAndRanges count]; iFormatRange++)
-	{
-		thisFormatRange = [formatsAndRanges objectAtIndex:iFormatRange];
-		[[textView textStorage]
-		 addAttribute:[thisFormatRange objectForKey:@"attributeName"]
-		 value:[thisFormatRange objectForKey:@"attributeValue"]
-		 range:[[thisFormatRange objectForKey:@"range"] rangeValue]
-		 ];
-	}
+	// get attributed string and display it
+	NSMutableAttributedString *attrStr = [ansiEscapeHelper attributedStringWithANSIEscapedString:string];
+	[[textView textStorage] setAttributedString:attrStr];
 }
 
 
