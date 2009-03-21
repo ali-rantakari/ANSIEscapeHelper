@@ -75,7 +75,10 @@
 	
 	NSString *cleanString;
 	NSArray *attributesAndRanges = [self attributesForString:aString cleanString:&cleanString];
-	NSMutableAttributedString *attributedString = [[[NSMutableAttributedString alloc] initWithString:cleanString] autorelease];
+	NSMutableAttributedString *attributedString = [[[NSMutableAttributedString alloc]
+													initWithString:cleanString
+													attributes:[NSDictionary dictionaryWithObject:self.font forKey:NSFontAttributeName]
+												   ] autorelease];
 	
 	NSDictionary *thisAttributeDict;
 	for (thisAttributeDict in attributesAndRanges)
@@ -204,7 +207,7 @@
 
 
 
-- (NSString*) ansiFormattedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString
+- (NSString*) ansiEscapedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString
 {
 	NSString* retStr = @"";
 	

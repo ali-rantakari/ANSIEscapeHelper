@@ -145,7 +145,7 @@ enum sgrCode
 
 
 /*!
- @method		ansiFormattedStringWithCodesAndLocations:cleanString:
+ @method		ansiEscapedStringWithCodesAndLocations:cleanString:
  
  @abstract		
  
@@ -156,7 +156,7 @@ enum sgrCode
  
  @result		
  */
-- (NSString*) ansiFormattedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString;
+- (NSString*) ansiEscapedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString;
 
 
 /*!
