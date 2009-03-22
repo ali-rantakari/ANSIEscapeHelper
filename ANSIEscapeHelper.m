@@ -346,7 +346,8 @@
 		return nil;
 	if ([aString length] <= [kANSIEscapeCSI length])
 	{
-		*aCleanString = [NSString stringWithString:aString];
+		if (aCleanString != NULL)
+			*aCleanString = [NSString stringWithString:aString];
 		return [NSArray array];
 	}
 	
@@ -490,7 +491,8 @@
 		];
 	}
 	
-	*aCleanString = cleanString;
+	if (aCleanString != NULL)
+		*aCleanString = cleanString;
 	
 	return attrsAndRanges;
 }

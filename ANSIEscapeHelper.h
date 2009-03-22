@@ -181,7 +181,8 @@ enum sgrCode
  
  @param aString			A String containing ANSI escape sequences
  @param aCleanString	Upon return, contains a "clean" version of aString (i.e. aString
-						without the ANSI escape sequences)
+						without the ANSI escape sequences.) Pass in NULL if you're not
+						interested in this.
  
  @result		An array containing NSDictionary objects, each of which has keys "range"
 				(an NSValue containing an NSRange, specifying the range for the
