@@ -627,15 +627,15 @@
 	{
 		NSArray *codesForGivenColor = [self.ansiColors allKeysForObject:aColor];
 		
-		if (codesForGivenColor == nil || [codesForGivenColor count] == 0)
-			return SGRCodeNoneOrInvalid;
-		
-		NSNumber *thisCode;
-		for (thisCode in codesForGivenColor)
+		if (codesForGivenColor != nil && [codesForGivenColor count] > 0)
 		{
-			BOOL thisIsForegroundColor = ([thisCode intValue] < 40);
-			if (aForeground == thisIsForegroundColor)
-				return [thisCode intValue];
+			NSNumber *thisCode;
+			for (thisCode in codesForGivenColor)
+			{
+				BOOL thisIsForegroundColor = ([thisCode intValue] < 40);
+				if (aForeground == thisIsForegroundColor)
+					return [thisCode intValue];
+			}
 		}
 	}
 	
