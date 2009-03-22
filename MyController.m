@@ -129,6 +129,9 @@
 	// get attributed string and display it
 	NSMutableAttributedString *attrStr = [ansiEscapeHelper attributedStringWithANSIEscapedString:string];
 	[[textView textStorage] setAttributedString:attrStr];
+	
+	NSString *ansiStr = [ansiEscapeHelper ansiEscapedStringWithAttributedString:attrStr];
+	NSLog(@"\n%@", ansiStr);
 }
 
 

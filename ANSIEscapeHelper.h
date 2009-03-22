@@ -212,4 +212,16 @@ enum sgrCode
  */
 - (NSColor*) colorForSGRCode:(enum sgrCode)code;
 
+
+/*!
+ @method		sgrCodeForColor:isForegroundColor:
+ 
+ @abstract		
+ 
+ @param aColor	
+ 
+ @result		
+ */
+- (enum sgrCode) sgrCodeForColor:(NSColor*)aColor isForegroundColor:(BOOL)aForeground;
+
 @end
