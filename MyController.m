@@ -128,6 +128,19 @@
 	
 	// get attributed string and display it
 	NSMutableAttributedString *attrStr = [ansiEscapeHelper attributedStringWithANSIEscapedString:string];
+	
+	/*
+	 // test changing the attributed string programmatically after generating it
+	 // but before changing it back to an ANSI-escaped string
+	[attrStr
+	 addAttributes:[NSDictionary
+					dictionaryWithObject:(NSColor *)[NSUnarchiver unarchiveObjectWithData:[[NSUserDefaults standardUserDefaults] dataForKey:kANSIColorPrefKey_FgMagenta]]
+					forKey:NSForegroundColorAttributeName
+					]
+	 range:NSMakeRange(16, 4)
+	];
+	 */
+	
 	[[textView textStorage] setAttributedString:attrStr];
 	
 	NSString *ansiStr = [ansiEscapeHelper ansiEscapedStringWithAttributedString:attrStr];
