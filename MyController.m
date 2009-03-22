@@ -127,7 +127,8 @@
 	[ansiEscapeHelper setFont:[textView font]];
 	
 	// get attributed string and display it
-	NSMutableAttributedString *attrStr = [ansiEscapeHelper attributedStringWithANSIEscapedString:string];
+	NSMutableAttributedString *attrStr = [[[NSMutableAttributedString alloc] init] autorelease];
+	[attrStr setAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
 	
 	/*
 	 // test changing the attributed string programmatically after generating it

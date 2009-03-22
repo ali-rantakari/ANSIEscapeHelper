@@ -103,27 +103,29 @@ enum sgrCode
 /*!
  @method		attributedStringWithANSIEscapedString:
  
- @abstract		
- 
- @discussion	
+ @abstract		Returns an attributed string that corresponds both in contents
+				and formatting to a given string that contains ANSI escape
+				sequences.
  
  @param aString			A String containing ANSI escape sequences
  
- @result		
+ @result		An attributed string that mimics as closely as possible
+				the formatting of the given attributed string.
  */
-- (NSMutableAttributedString*) attributedStringWithANSIEscapedString:(NSString*)aString;
+- (NSAttributedString*) attributedStringWithANSIEscapedString:(NSString*)aString;
 
 
 /*!
  @method		ansiEscapedStringWithAttributedString:
  
- @abstract		
+ @abstract		Returns a string containing ANSI escape sequences that corresponds
+				both in contents and formatting to a given attributed string.
  
- @discussion	
+ @param aAttributedString		An attributed string
  
- @param aAttributedString		
- 
- @result		
+ @result		A string that mimics as closely as possible
+				the formatting of the given attributed string with
+				ANSI escape sequences.
  */
 - (NSString*) ansiEscapedStringWithAttributedString:(NSAttributedString*)aAttributedString;
 
@@ -131,15 +133,19 @@ enum sgrCode
 /*!
  @method		escapeCodesForString:cleanString:
  
- @abstract		
- 
- @discussion	
+ @abstract		Returns an array of SGR codes and their locations from a
+				string containing ANSI escape sequences as well as a "clean"
+				version of the string (i.e. one without the ANSI escape
+				sequences.)
  
  @param aString			A String containing ANSI escape sequences
  @param aCleanString	Upon return, contains a "clean" version of aString (i.e. aString
 						without the ANSI escape sequences)
  
- @result		
+ @result		An array of NSDictionary objects, each of which has
+				an NSNumber value for the key "code" (specifying an SGR code) and
+				another NSNumber value for the key "location" (specifying the
+				location of the code within aCleanString.)
  */
 - (NSArray*) escapeCodesForString:(NSString*)aString cleanString:(NSString**)aCleanString;
 
@@ -147,14 +153,18 @@ enum sgrCode
 /*!
  @method		ansiEscapedStringWithCodesAndLocations:cleanString:
  
- @abstract		
+ @abstract		Returns a string containing ANSI escape codes for formatting based
+				on a string and an array of SGR codes and their locations within
+				the given string.
  
- @discussion	
+ @param aCodesArray		An array of NSDictionary objects, each of which should have
+						an NSNumber value for the key "code" (specifying an SGR
+						code) and another NSNumber value for the key "location"
+						(specifying the location of this SGR code in aCleanString.)
+ @param aCleanString	The string to which to insert the ANSI escape codes
+						described in aCodesArray.
  
- @param aCodesArray		
- @param aCleanString	
- 
- @result		
+ @result		A string containing ANSI escape codes.
  */
 - (NSString*) ansiEscapedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString;
 
@@ -189,7 +199,9 @@ enum sgrCode
  @abstract		Whether the occurrence of a given SGR code would end the formatting run
 				introduced by another SGR code.
  
- @discussion	Formatting runs 
+ @discussion	For example, SGRCodeFgReset, SGRCodeAllReset or any SGR code
+				specifying a foreground color would end the formatting run
+				introduced by a foreground color -specifying SGR code.
  
  @param endCode		The SGR code to test as a candidate for ending the formatting run
 					introduced by startCode
@@ -206,6 +218,10 @@ enum sgrCode
  
  @abstract		Returns the color to use for displaying a specific ANSI color.
  
+ @discussion	This method first considers the values set in the ansiColors
+				property and only then the standard basic colors (NSColor's
+				redColor, blueColor etc.)
+ 
  @param code	An SGR code that specifies an ANSI color.
  
  @result		The color to use for displaying the ANSI color specified by code.
@@ -216,11 +232,20 @@ enum sgrCode
 /*!
  @method		sgrCodeForColor:isForegroundColor:
  
- @abstract		
+ @abstract		Returns an SGR code that corresponds to a given color.
  
- @param aColor	
+ @discussion	This method matches colors to their equivalent SGR codes
+				by going through the colors specified in the ansiColors
+				dictionary, and if ansiColors is null or if a match is
+				not found there, by comparing the given color to the
+				standard basic colors (NSColor's redColor, blueColor
+				etc.) The comparison is done simply by checking for
+				equality.
  
- @result		
+ @param aColor			The color to get a corresponding SGR code for
+ @param aForeground		Whether you want a foreground or background color code
+ 
+ @result		SGR code that corresponds with aColor.
  */
 - (enum sgrCode) sgrCodeForColor:(NSColor*)aColor isForegroundColor:(BOOL)aForeground;
 

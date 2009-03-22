@@ -9,6 +9,8 @@
 /*
  todo:
  
+ - don't add useless "reset" escape codes to the string in
+   -ansiEscapedStringWithAttributedString:
  - use NSMaxRange() instead of range.location+range.length
  - use NSMutableString in -ansiEscapedStringWithCodesAndLocations:cleanString: (?) 
  
@@ -73,7 +75,7 @@
 
 
 
-- (NSMutableAttributedString*) attributedStringWithANSIEscapedString:(NSString*)aString
+- (NSAttributedString*) attributedStringWithANSIEscapedString:(NSString*)aString
 {
 	if (aString == nil)
 		return nil;
@@ -633,8 +635,6 @@
 			if (aForeground == thisIsForegroundColor)
 				return [thisCode intValue];
 		}
-		
-		return [[codesForGivenColor objectAtIndex:0] intValue];
 	}
 	
 	if (aForeground)
