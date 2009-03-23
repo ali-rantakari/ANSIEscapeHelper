@@ -37,7 +37,10 @@
 
 - (IBAction) icalBuddyButtonPress:(id)sender
 {
-	NSString *newLinesString = [self runTaskWithPath:@"/usr/local/bin/icalBuddy" withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]];
+	NSString *newLinesString = [self 
+								runTaskWithPath:@"/usr/local/bin/icalBuddy"
+								withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]
+								];
 	[self showString:newLinesString];
 }
 
