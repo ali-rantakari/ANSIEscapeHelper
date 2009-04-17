@@ -31,7 +31,9 @@
 
 - (IBAction) cProgramButtonPress:(id)sender
 {
+	NSLog(@"resource = %@", [[NSBundle mainBundle] pathForResource:@"a" ofType:@"out"]);
 	NSString *newLinesString = [self runTaskWithPath:[[NSBundle mainBundle] pathForResource:@"a" ofType:@"out"] withArgs:[NSArray array]];
+	NSLog(@"newLinesString = %@", newLinesString);
 	[self showString:newLinesString];
 }
 
@@ -39,7 +41,7 @@
 {
 	NSString *newLinesString = [self 
 								runTaskWithPath:@"/usr/local/bin/icalBuddy"
-								withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"uncompletedTasks",nil]
+								withArgs:[NSArray arrayWithObjects:@"-f",@"-sc",@"eventsToday+10",nil]
 								];
 	[self showString:newLinesString];
 }
@@ -59,6 +61,8 @@
 
 - (void) showString:(NSString*)string
 {
+	[textView setBaseWritingDirection:NSWritingDirectionLeftToRight];
+	
 	// clean all attributes
 	NSArray *attrs = [NSArray arrayWithObjects:
 					  NSFontAttributeName,
@@ -128,6 +132,9 @@
 		}
 	}
 	[ansiEscapeHelper setFont:[textView font]];
+	
+	if (string == nil)
+		return;
 	
 	// get attributed string and display it
 	NSMutableAttributedString *attrStr = [[[NSMutableAttributedString alloc] init] autorelease];

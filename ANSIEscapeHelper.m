@@ -11,7 +11,6 @@
  
  - don't add useless "reset" escape codes to the string in
    -ansiEscapedStringWithAttributedString:
- - use NSMaxRange() instead of range.location+range.length
  - use NSMutableString in -ansiEscapedStringWithCodesAndLocations:cleanString: (?) 
  
  */
@@ -227,7 +226,7 @@
 			NSUInteger thisIndex;
 			for (;;)
 			{
-				thisIndex = (thisEscapeSequenceRange.location+thisEscapeSequenceRange.length+lengthAddition-1);
+				thisIndex = (NSMaxRange(thisEscapeSequenceRange)+lengthAddition-1);
 				if (thisIndex >= aStringLength)
 					break;
 				
@@ -281,7 +280,7 @@
 				cleanString = [cleanString stringByAppendingString:[aString substringWithRange:NSMakeRange(searchRange.location, thisCoveredLength)]];
 			
 			coveredLength += thisCoveredLength;
-			searchRange.location = thisEscapeSequenceRange.location+thisEscapeSequenceRange.length;
+			searchRange.location = NSMaxRange(thisEscapeSequenceRange);
 			searchRange.length = aStringLength-searchRange.location;
 		}
 	}

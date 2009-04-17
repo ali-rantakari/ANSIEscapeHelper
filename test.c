@@ -33,9 +33,11 @@
 
 int main(int argc, char *argv[])
 {
+	/*
 	printf("alternative CSI:\n");
 	printf("\23344mhello\233m\n");
 	printf("\n");
+	*/
 	
 	printf("basic colors:\n");
 	printf("%sred %sgreen%s %syellow%s and %sblue.\n", kANSIEscapeRed, kANSIEscapeGreen, kANSIEscapeReset, kANSIEscapeYellow, kANSIEscapeReset, kANSIEscapeBlue);
