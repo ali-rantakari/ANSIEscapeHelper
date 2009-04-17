@@ -11,7 +11,6 @@
  
  - don't add useless "reset" escape codes to the string in
    -ansiEscapedStringWithAttributedString:
- - use NSMutableString in -ansiEscapedStringWithCodesAndLocations:cleanString: (?) 
  
  */
 
@@ -299,7 +298,7 @@
 
 - (NSString*) ansiEscapedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString
 {
-	NSString* retStr = @"";
+	NSMutableString* retStr = [NSMutableString stringWithCapacity:[aCleanString length]];
 	
 	NSSortDescriptor *sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:kCodeDictKey_location ascending:YES] autorelease];
 	NSArray *codesArray = [aCodesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
@@ -321,16 +320,16 @@
 			continue;
 		
 		if (aCleanStringIndex < formattingRunStartLocation)
-			retStr = [retStr stringByAppendingString:[aCleanString substringWithRange:NSMakeRange(aCleanStringIndex, formattingRunStartLocation-aCleanStringIndex)]];
-		retStr = [retStr stringByAppendingString:kANSIEscapeCSI];
-		retStr = [retStr stringByAppendingString:[NSString stringWithFormat:@"%d", thisCode]];
-		retStr = [retStr stringByAppendingString:kANSIEscapeSGREnd];
+			[retStr appendString:[aCleanString substringWithRange:NSMakeRange(aCleanStringIndex, formattingRunStartLocation-aCleanStringIndex)]];
+		[retStr appendString:kANSIEscapeCSI];
+		[retStr appendString:[NSString stringWithFormat:@"%d", thisCode]];
+		[retStr appendString:kANSIEscapeSGREnd];
 		
 		aCleanStringIndex = formattingRunStartLocation;
 	}
 	
 	if (aCleanStringIndex < aCleanStringLength)
-		retStr = [retStr stringByAppendingString:[aCleanString substringFromIndex:aCleanStringIndex]];
+		[retStr appendString:[aCleanString substringFromIndex:aCleanStringIndex]];
 	
 	return retStr;
 }
