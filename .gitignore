@@ -3,7 +3,7 @@
 
 build
 deployment
-docs
+headerdoc
 
 deploymentScpTarget
 pathToSparklePrivateKey
