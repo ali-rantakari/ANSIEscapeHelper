@@ -101,7 +101,16 @@ enum sgrCode
 {
 	NSFont *font;
 	NSMutableDictionary *ansiColors;
+    NSColor *defaultStringColor;
 }
+
+/*!
+ @property		defaultStringColor
+ 
+ @abstract		The default color used when creating an attributed string (default is black).
+ */
+@property(copy) NSColor *defaultStringColor;
+
 
 /*!
  @property		font
