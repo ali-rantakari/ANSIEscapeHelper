@@ -117,7 +117,7 @@ enum sgrCode
  
  @abstract		The font to use when creating string formatting attribute values.
  */
-@property(retain) NSFont *font;
+@property(copy) NSFont *font;
 
 /*!
  @property		ansiColors
