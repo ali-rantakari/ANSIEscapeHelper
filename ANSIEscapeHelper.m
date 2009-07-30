@@ -77,7 +77,9 @@ THE SOFTWARE.
 
 @implementation ANSIEscapeHelper
 
-@synthesize font, ansiColors, defaultStringColor;
+@synthesize font;
+@synthesize ansiColors;
+@synthesize defaultStringColor;
 
 - (id) init
 {
@@ -109,8 +111,9 @@ THE SOFTWARE.
 													attributes:[NSDictionary dictionaryWithObjectsAndKeys:
                                                                 self.font, NSFontAttributeName,
                                                                 self.defaultStringColor, NSForegroundColorAttributeName,
-                                                                nil]
-												   ] autorelease];
+                                                                nil
+																]
+													] autorelease];
 	
 	NSDictionary *thisAttributeDict;
 	for (thisAttributeDict in attributesAndRanges)

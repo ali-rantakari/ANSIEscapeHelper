@@ -64,25 +64,25 @@ enum sgrCode
 	SGRCodeUnderlineDouble =	21,
 	SGRCodeUnderlineNone =		24,
 	
-	SGRCodeFgBlack =		30,
-	SGRCodeFgRed =			31,
-	SGRCodeFgGreen =		32,
-	SGRCodeFgYellow =		33,
-	SGRCodeFgBlue =			34,
-	SGRCodeFgMagenta =		35,
-	SGRCodeFgCyan =			36,
-	SGRCodeFgWhite =		37,
-	SGRCodeFgReset =		39,
+	SGRCodeFgBlack =			30,
+	SGRCodeFgRed =				31,
+	SGRCodeFgGreen =			32,
+	SGRCodeFgYellow =			33,
+	SGRCodeFgBlue =				34,
+	SGRCodeFgMagenta =			35,
+	SGRCodeFgCyan =				36,
+	SGRCodeFgWhite =			37,
+	SGRCodeFgReset =			39,
 	
-	SGRCodeBgBlack =		40,
-	SGRCodeBgRed =			41,
-	SGRCodeBgGreen =		42,
-	SGRCodeBgYellow =		43,
-	SGRCodeBgBlue =			44,
-	SGRCodeBgMagenta =		45,
-	SGRCodeBgCyan =			46,
-	SGRCodeBgWhite =		47,
-	SGRCodeBgReset =		49
+	SGRCodeBgBlack =			40,
+	SGRCodeBgRed =				41,
+	SGRCodeBgGreen =			42,
+	SGRCodeBgYellow =			43,
+	SGRCodeBgBlue =				44,
+	SGRCodeBgMagenta =			45,
+	SGRCodeBgCyan =				46,
+	SGRCodeBgWhite =			47,
+	SGRCodeBgReset =			49
 };
 
 
