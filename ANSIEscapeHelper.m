@@ -83,18 +83,22 @@ THE SOFTWARE.
 
 - (id) init
 {
-	self = [super init];
-	
-	// default font
-	self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-	
-	// default ANSI colors
-	self.ansiColors = [NSMutableDictionary dictionary];
-    
-    // default string color
-    self.defaultStringColor = [NSColor blackColor];
+	if (self = [super init])
+	{
+		self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+		self.defaultStringColor = [NSColor blackColor];
+		self.ansiColors = [NSMutableDictionary dictionary];
+	}
 	
 	return self;
+}
+
+- (void) dealloc
+{
+	self.font = nil;
+	self.ansiColors = nil;
+	self.defaultStringColor = nil;
+	[super dealloc];
 }
 
 
