@@ -186,7 +186,7 @@
 	
 	[task release];
 	
-	return string;
+	return [string autorelease];
 }
 
 
