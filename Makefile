@@ -96,6 +96,21 @@ deploy: package
 
 #-------------------------------------------------------------------------
 #-------------------------------------------------------------------------
+# deploy headerdocs to server
+#-------------------------------------------------------------------------
+deploy-docs: docs
+	@echo
+	@echo ---- Deploying headerdoc HTML files to server:
+	@echo ======================================
+	
+	@( echo "Press enter to continue uploading to server or Ctrl-C to cancel.";\
+	read INPUTSTR;\
+	scp -r $(DOCS_DIR) $(SCP_TARGET); )
+
+
+
+#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 clean:
 	@echo
 	@echo ---- Cleaning up:
