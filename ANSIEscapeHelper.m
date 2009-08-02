@@ -61,8 +61,8 @@ THE SOFTWARE.
 
 // dictionary keys for the SGR code dictionaries that the array
 // escapeCodesForString:cleanString: returns contains
-#define kCodeDictKey_code		@"code"
-#define kCodeDictKey_location	@"location"
+#define kCodeDictKey_code			@"code"
+#define kCodeDictKey_location		@"location"
 
 // dictionary keys for the string formatting attribute
 // dictionaries that the array attributesForString:cleanString:
@@ -72,7 +72,7 @@ THE SOFTWARE.
 #define kAttrDictKey_attrValue		@"attributeValue"
 
 // minimum weight for an NSFont for it to be considered bold
-#define kBoldFontMinWeight 9
+#define kBoldFontMinWeight			9
 
 
 @implementation ANSIEscapeHelper
