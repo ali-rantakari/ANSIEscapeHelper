@@ -28,6 +28,11 @@
 	return self;
 }
 
+- (void) dealloc
+{
+	[super dealloc];
+}
+
 
 - (IBAction) cProgramButtonPress:(id)sender
 {
