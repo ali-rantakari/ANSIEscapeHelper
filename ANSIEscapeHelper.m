@@ -83,7 +83,7 @@ THE SOFTWARE.
 
 - (id) init
 {
-	if (self = [super init])
+	if (( self = [super init] ))
 	{
 		self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
 		self.defaultStringColor = [NSColor blackColor];
