@@ -123,9 +123,9 @@ THE SOFTWARE.
 	for (thisAttributeDict in attributesAndRanges)
 	{
 		[attributedString
-		 addAttribute:[thisAttributeDict objectForKey:@"attributeName"]
-		 value:[thisAttributeDict objectForKey:@"attributeValue"]
-		 range:[[thisAttributeDict objectForKey:@"range"] rangeValue]
+		 addAttribute:[thisAttributeDict objectForKey:kAttrDictKey_attrName]
+		 value:[thisAttributeDict objectForKey:kAttrDictKey_attrValue]
+		 range:[[thisAttributeDict objectForKey:kAttrDictKey_range] rangeValue]
 		 ];
 	}
 	
