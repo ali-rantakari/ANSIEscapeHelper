@@ -30,6 +30,24 @@
 #define kANSIEscapeBgWhite		"\033[47m"
 #define kANSIEscapeBgReset		"\033[49m"
 
+#define kANSIEscapeBrightBlack 		"\033[90m"
+#define kANSIEscapeBrightRed 		"\033[91m"
+#define kANSIEscapeBrightGreen 		"\033[92m"
+#define kANSIEscapeBrightYellow 	"\033[93m"
+#define kANSIEscapeBrightBlue 		"\033[94m"
+#define kANSIEscapeBrightMagenta 	"\033[95m"
+#define kANSIEscapeBrightCyan		"\033[96m"
+#define kANSIEscapeBrightWhite		"\033[97m"
+
+#define kANSIEscapeBgBrightBlack	"\033[100m"
+#define kANSIEscapeBgBrightRed 		"\033[101m"
+#define kANSIEscapeBgBrightGreen 	"\033[102m"
+#define kANSIEscapeBgBrightYellow 	"\033[103m"
+#define kANSIEscapeBgBrightBlue 	"\033[104m"
+#define kANSIEscapeBgBrightMagenta 	"\033[105m"
+#define kANSIEscapeBgBrightCyan		"\033[106m"
+#define kANSIEscapeBgBrightWhite	"\033[107m"
+
 
 int main(int argc, char *argv[])
 {
@@ -39,14 +57,29 @@ int main(int argc, char *argv[])
 	printf("\n");
 	*/
 	
-	printf("basic colors:\n");
+	printf("foreground colors:\n");
 	printf("%sred %sgreen%s %syellow%s and %sblue.\n", kANSIEscapeRed, kANSIEscapeGreen, kANSIEscapeReset, kANSIEscapeYellow, kANSIEscapeReset, kANSIEscapeBlue);
 	printf("%smagenta %scyan%s and %swhite%s.\n", kANSIEscapeMagenta, kANSIEscapeCyan, kANSIEscapeReset, kANSIEscapeWhite, kANSIEscapeReset);
+	printf("\n");
+	
+	printf("bright foreground colors:\n");
+	printf("%sred %sgreen%s %syellow%s and %sblue.\n", kANSIEscapeBrightRed, kANSIEscapeBrightGreen, kANSIEscapeReset, kANSIEscapeBrightYellow, kANSIEscapeReset, kANSIEscapeBrightBlue);
+	printf("%smagenta %scyan%s and %swhite%s. also %sblack%s.\n", kANSIEscapeBrightMagenta, kANSIEscapeBrightCyan, kANSIEscapeReset, kANSIEscapeBrightWhite, kANSIEscapeReset, kANSIEscapeBrightBlack, kANSIEscapeReset);
 	printf("\n");
 	
 	printf("background colors:\n");
 	printf("%sred %sgreen%s %syellow%s and %sblue.\n", kANSIEscapeBgRed, kANSIEscapeBgGreen, kANSIEscapeReset, kANSIEscapeBgYellow, kANSIEscapeReset, kANSIEscapeBgBlue);
 	printf("%smagenta %scyan%s and %swhite%s.\n", kANSIEscapeBgMagenta, kANSIEscapeBgCyan, kANSIEscapeReset, kANSIEscapeBgWhite, kANSIEscapeReset);
+	printf("\n");
+	
+	printf("bright background colors:\n");
+	printf("%sred %sgreen%s %syellow%s and %sblue.\n", kANSIEscapeBgBrightRed, kANSIEscapeBgBrightGreen, kANSIEscapeReset, kANSIEscapeBgBrightYellow, kANSIEscapeReset, kANSIEscapeBgBrightBlue);
+	printf("%smagenta %scyan%s and %swhite%s. also %sblack%s.\n", kANSIEscapeBgBrightMagenta, kANSIEscapeBgBrightCyan, kANSIEscapeReset, kANSIEscapeBgBrightWhite, kANSIEscapeReset, kANSIEscapeBgBrightBlack, kANSIEscapeReset);
+	printf("\n");
+	
+	printf("bright color reset test:\n");
+	printf("%sgreen%s reset %sblue bg%s reset.\n", kANSIEscapeBrightGreen, kANSIEscapeFgReset, kANSIEscapeBgBrightBlue, kANSIEscapeBgReset);
+	printf("%sbright %sand normal%s. %sbright bg %sand normal.%s\n", kANSIEscapeBrightCyan, kANSIEscapeCyan, kANSIEscapeFgReset, kANSIEscapeBgBrightRed, kANSIEscapeBgRed, kANSIEscapeBgReset);
 	printf("\n");
 	
 	printf("overlapping foreground and background colors:\n");
