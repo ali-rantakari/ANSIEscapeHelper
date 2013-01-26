@@ -92,6 +92,9 @@ THE SOFTWARE.
 #define kDefaultANSIColorBgBrightCyan       kDefaultANSIColorFgBrightCyan
 #define kDefaultANSIColorBgBrightWhite      kDefaultANSIColorFgBrightWhite
 
+#define kDefaultFontSize [NSFont systemFontOfSize:NSFont.systemFontSize]
+#define kDefaultForegroundColor NSColor.blackColor
+
 // minimum weight for an NSFont for it to be considered bold
 #define kBoldFontMinWeight          9
 
@@ -103,8 +106,6 @@ THE SOFTWARE.
     if (!(self = [super init]))
         return nil;
 
-    self.font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
-    self.defaultStringColor = [NSColor blackColor];
     self.ansiColors = [NSMutableDictionary dictionary];
 
     return self;
@@ -121,8 +122,10 @@ THE SOFTWARE.
     NSArray *attributesAndRanges = [self attributesForString:aString cleanString:&cleanString];
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]
                                                    initWithString:cleanString
-                                                   attributes:@{NSFontAttributeName:self.font, NSForegroundColorAttributeName:self.defaultStringColor}
-                                                   ];
+                                                   attributes:@{
+                                                   NSFontAttributeName: self.font ?: kDefaultFontSize,
+                                                   NSForegroundColorAttributeName: self.defaultStringColor ?: kDefaultForegroundColor
+                                                   }];
 
     for (NSDictionary *thisAttributeDict in attributesAndRanges)
     {
