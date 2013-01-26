@@ -268,16 +268,16 @@ THE SOFTWARE.
 
                 unichar c = [aString characterAtIndex:thisIndex];
 
-                if ((48 <= c) && (c <= 57)) // 0-9
+                if (('0' <= c) && (c <= '9'))
                 {
-                    int digit = c-48;
+                    int digit = c - '0';
                     code = (code == 0) ? digit : code*10+digit;
                 }
 
                 // ASCII decimal 109 is the SGR (Select Graphic Rendition) final byte
                 // ("m"). this means that the code value we've just read specifies formatting
                 // for the output; exactly what we're interested in.
-                if (c == 109)
+                if (c == 'm')
                 {
                     [codes addObject:@(code)];
                     break;
@@ -287,7 +287,7 @@ THE SOFTWARE.
                     [codes removeAllObjects];
                     break;
                 }
-                else if (c == 59) // semicolon (;) separates codes within the same sequence
+                else if (c == ';') // separates codes within the same sequence
                 {
                     [codes addObject:@(code)];
                     code = 0;
