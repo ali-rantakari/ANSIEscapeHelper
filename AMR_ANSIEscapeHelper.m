@@ -299,10 +299,10 @@ THE SOFTWARE.
 
             NSUInteger locationInCleanString = coveredLength+thisEscapeSequenceRange.location-searchRange.location;
 
-            for (NSNumber *code in codes)
+            for (NSNumber *codeToAdd in codes)
             {
                 [formatCodes addObject: @{
-                     kAMRCodeDictKey_code: code,
+                     kAMRCodeDictKey_code: codeToAdd,
                  kAMRCodeDictKey_location: @(locationInCleanString)
                  }];
             }
