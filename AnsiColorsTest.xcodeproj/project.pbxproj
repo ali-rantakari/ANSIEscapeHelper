@@ -14,7 +14,7 @@
 		C91DC0170F72938E006C7A67 /* test-onechar.pl in Resources */ = {isa = PBXBuildFile; fileRef = C91DC0160F72938E006C7A67 /* test-onechar.pl */; };
 		C926C7960F7136220057A11E /* MyController.m in Sources */ = {isa = PBXBuildFile; fileRef = C926C7940F7136220057A11E /* MyController.m */; };
 		C926C8850F715CFB0057A11E /* a.out in Resources */ = {isa = PBXBuildFile; fileRef = C926C8840F715CFB0057A11E /* a.out */; };
-		C9FB759B0F718745009BA734 /* ANSIEscapeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C9FB759A0F718745009BA734 /* ANSIEscapeHelper.m */; };
+		C9DA2CFF16B4247000572FD1 /* AMR_ANSIEscapeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C9DA2CFE16B4247000572FD1 /* AMR_ANSIEscapeHelper.m */; };
 		C9FB76BD0F71AC3A009BA734 /* test.pl in Resources */ = {isa = PBXBuildFile; fileRef = C9FB76BC0F71AC3A009BA734 /* test.pl */; };
 /* End PBXBuildFile section */
 
@@ -33,8 +33,8 @@
 		C926C7940F7136220057A11E /* MyController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyController.m; sourceTree = "<group>"; };
 		C926C7950F7136220057A11E /* MyController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyController.h; sourceTree = "<group>"; };
 		C926C8840F715CFB0057A11E /* a.out */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = a.out; sourceTree = "<group>"; };
-		C9FB75990F718745009BA734 /* ANSIEscapeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANSIEscapeHelper.h; sourceTree = "<group>"; };
-		C9FB759A0F718745009BA734 /* ANSIEscapeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ANSIEscapeHelper.m; sourceTree = "<group>"; };
+		C9DA2CFD16B4247000572FD1 /* AMR_ANSIEscapeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMR_ANSIEscapeHelper.h; sourceTree = "<group>"; };
+		C9DA2CFE16B4247000572FD1 /* AMR_ANSIEscapeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMR_ANSIEscapeHelper.m; sourceTree = "<group>"; };
 		C9FB76BC0F71AC3A009BA734 /* test.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = test.pl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -53,10 +53,10 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C9DA2CFD16B4247000572FD1 /* AMR_ANSIEscapeHelper.h */,
+				C9DA2CFE16B4247000572FD1 /* AMR_ANSIEscapeHelper.m */,
 				C926C7950F7136220057A11E /* MyController.h */,
 				C926C7940F7136220057A11E /* MyController.m */,
-				C9FB75990F718745009BA734 /* ANSIEscapeHelper.h */,
-				C9FB759A0F718745009BA734 /* ANSIEscapeHelper.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -158,7 +158,11 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "AnsiColorsTest" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* AnsiColorsTest */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -190,7 +194,7 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				C926C7960F7136220057A11E /* MyController.m in Sources */,
-				C9FB759B0F718745009BA734 /* ANSIEscapeHelper.m in Sources */,
+				C9DA2CFF16B4247000572FD1 /* AMR_ANSIEscapeHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +234,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = AnsiColorsTest;
+				SDKROOT = "";
 			};
 			name = Debug;
 		};
@@ -244,32 +249,39 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = AnsiColorsTest;
+				SDKROOT = "";
 			};
 			name = Release;
 		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PREBINDING = NO;
 				SDKROOT = macosx10.5;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};

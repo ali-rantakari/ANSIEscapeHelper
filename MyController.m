@@ -21,18 +21,6 @@
 
 @implementation MyController
 
-- (id) init
-{
-	self = [super init];
-	
-	return self;
-}
-
-- (void) dealloc
-{
-	[super dealloc];
-}
-
 
 - (IBAction) cProgramButtonPress:(id)sender
 {
@@ -69,7 +57,7 @@
 	[textView setBaseWritingDirection:NSWritingDirectionLeftToRight];
 	
 	// clean all attributes
-	NSArray *attrs = [NSArray arrayWithObjects:
+	NSArray *attrs = @[
 					  NSFontAttributeName,
 					  NSParagraphStyleAttributeName,
 					  NSForegroundColorAttributeName,
@@ -92,7 +80,6 @@
 					  NSCursorAttributeName,
 					  NSToolTipAttributeName,
 					  NSMarkedClauseSegmentAttributeName,
-					  nil
 					  ];
 	NSString *attr;
 	NSRange fullRange = NSMakeRange(0, [[textView string] length]);
@@ -102,26 +89,26 @@
 	}
 	
 	
-	ansiEscapeHelper = [[[ANSIEscapeHelper alloc] init] autorelease];
+	ansiEscapeHelper = [[AMR_ANSIEscapeHelper alloc] init];
 	
 	// set colors & font to use to ansiEscapeHelper
 	NSDictionary *colorPrefDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
-										   [NSNumber numberWithInt:SGRCodeFgBlack], kANSIColorPrefKey_FgBlack,
-										   [NSNumber numberWithInt:SGRCodeFgWhite], kANSIColorPrefKey_FgWhite,
-										   [NSNumber numberWithInt:SGRCodeFgRed], kANSIColorPrefKey_FgRed,
-										   [NSNumber numberWithInt:SGRCodeFgGreen], kANSIColorPrefKey_FgGreen,
-										   [NSNumber numberWithInt:SGRCodeFgYellow], kANSIColorPrefKey_FgYellow,
-										   [NSNumber numberWithInt:SGRCodeFgBlue], kANSIColorPrefKey_FgBlue,
-										   [NSNumber numberWithInt:SGRCodeFgMagenta], kANSIColorPrefKey_FgMagenta,
-										   [NSNumber numberWithInt:SGRCodeFgCyan], kANSIColorPrefKey_FgCyan,
-										   [NSNumber numberWithInt:SGRCodeBgBlack], kANSIColorPrefKey_BgBlack,
-										   [NSNumber numberWithInt:SGRCodeBgWhite], kANSIColorPrefKey_BgWhite,
-										   [NSNumber numberWithInt:SGRCodeBgRed], kANSIColorPrefKey_BgRed,
-										   [NSNumber numberWithInt:SGRCodeBgGreen], kANSIColorPrefKey_BgGreen,
-										   [NSNumber numberWithInt:SGRCodeBgYellow], kANSIColorPrefKey_BgYellow,
-										   [NSNumber numberWithInt:SGRCodeBgBlue], kANSIColorPrefKey_BgBlue,
-										   [NSNumber numberWithInt:SGRCodeBgMagenta], kANSIColorPrefKey_BgMagenta,
-										   [NSNumber numberWithInt:SGRCodeBgCyan], kANSIColorPrefKey_BgCyan,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgBlack], kANSIColorPrefKey_FgBlack,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgWhite], kANSIColorPrefKey_FgWhite,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgRed], kANSIColorPrefKey_FgRed,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgGreen], kANSIColorPrefKey_FgGreen,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgYellow], kANSIColorPrefKey_FgYellow,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgBlue], kANSIColorPrefKey_FgBlue,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgMagenta], kANSIColorPrefKey_FgMagenta,
+										   [NSNumber numberWithInt:AMR_SGRCodeFgCyan], kANSIColorPrefKey_FgCyan,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgBlack], kANSIColorPrefKey_BgBlack,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgWhite], kANSIColorPrefKey_BgWhite,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgRed], kANSIColorPrefKey_BgRed,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgGreen], kANSIColorPrefKey_BgGreen,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgYellow], kANSIColorPrefKey_BgYellow,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgBlue], kANSIColorPrefKey_BgBlue,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgMagenta], kANSIColorPrefKey_BgMagenta,
+										   [NSNumber numberWithInt:AMR_SGRCodeBgCyan], kANSIColorPrefKey_BgCyan,
 										   nil];
 	NSUInteger iColorPrefDefaultsKey;
 	NSData *colorData;
@@ -142,7 +129,7 @@
 		return;
 	
 	// get attributed string and display it
-	NSMutableAttributedString *attrStr = [[[NSMutableAttributedString alloc] init] autorelease];
+	NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] init];
 	[attrStr setAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
 	
 	/*
@@ -189,9 +176,7 @@
 	NSString *string;
 	string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 	
-	[task release];
-	
-	return [string autorelease];
+	return string;
 }
 
 
