@@ -56,14 +56,14 @@ THE SOFTWARE.
 #define kBrightColorWithHue(h)  [NSColor colorWithCalibratedHue:(h) saturation:kBrightColorSaturation brightness:kBrightColorBrightness alpha:kBrightColorAlpha]
 
 // default colors
-#define kDefaultANSIColorFgBlack    [NSColor blackColor]
-#define kDefaultANSIColorFgRed      [NSColor redColor]
-#define kDefaultANSIColorFgGreen    [NSColor greenColor]
-#define kDefaultANSIColorFgYellow   [NSColor yellowColor]
-#define kDefaultANSIColorFgBlue     [NSColor blueColor]
-#define kDefaultANSIColorFgMagenta  [NSColor magentaColor]
-#define kDefaultANSIColorFgCyan     [NSColor cyanColor]
-#define kDefaultANSIColorFgWhite    [NSColor whiteColor]
+#define kDefaultANSIColorFgBlack    NSColor.blackColor
+#define kDefaultANSIColorFgRed      NSColor.redColor
+#define kDefaultANSIColorFgGreen    NSColor.greenColor
+#define kDefaultANSIColorFgYellow   NSColor.yellowColor
+#define kDefaultANSIColorFgBlue     NSColor.blueColor
+#define kDefaultANSIColorFgMagenta  NSColor.magentaColor
+#define kDefaultANSIColorFgCyan     NSColor.cyanColor
+#define kDefaultANSIColorFgWhite    NSColor.whiteColor
 
 #define kDefaultANSIColorFgBrightBlack      [NSColor colorWithCalibratedWhite:0.337 alpha:1.0]
 #define kDefaultANSIColorFgBrightRed        kBrightColorWithHue(1.0)
@@ -72,16 +72,16 @@ THE SOFTWARE.
 #define kDefaultANSIColorFgBrightBlue       kBrightColorWithHue(2.0/3.0)
 #define kDefaultANSIColorFgBrightMagenta    kBrightColorWithHue(5.0/6.0)
 #define kDefaultANSIColorFgBrightCyan       kBrightColorWithHue(0.5)
-#define kDefaultANSIColorFgBrightWhite      [NSColor whiteColor]
+#define kDefaultANSIColorFgBrightWhite      NSColor.whiteColor
 
-#define kDefaultANSIColorBgBlack    [NSColor blackColor]
-#define kDefaultANSIColorBgRed      [NSColor redColor]
-#define kDefaultANSIColorBgGreen    [NSColor greenColor]
-#define kDefaultANSIColorBgYellow   [NSColor yellowColor]
-#define kDefaultANSIColorBgBlue     [NSColor blueColor]
-#define kDefaultANSIColorBgMagenta  [NSColor magentaColor]
-#define kDefaultANSIColorBgCyan     [NSColor cyanColor]
-#define kDefaultANSIColorBgWhite    [NSColor whiteColor]
+#define kDefaultANSIColorBgBlack    NSColor.blackColor
+#define kDefaultANSIColorBgRed      NSColor.redColor
+#define kDefaultANSIColorBgGreen    NSColor.greenColor
+#define kDefaultANSIColorBgYellow   NSColor.yellowColor
+#define kDefaultANSIColorBgBlue     NSColor.blueColor
+#define kDefaultANSIColorBgMagenta  NSColor.magentaColor
+#define kDefaultANSIColorBgCyan     NSColor.cyanColor
+#define kDefaultANSIColorBgWhite    NSColor.whiteColor
 
 #define kDefaultANSIColorBgBrightBlack      kDefaultANSIColorFgBrightBlack
 #define kDefaultANSIColorBgBrightRed        kDefaultANSIColorFgBrightRed
@@ -153,7 +153,7 @@ THE SOFTWARE.
 
     for (NSString *thisAttrName in attrNames)
     {
-        NSRange limitRange = NSMakeRange(0, [aAttributedString length]);
+        NSRange limitRange = NSMakeRange(0, aAttributedString.length);
         id attributeValue;
         NSRange effectiveRange;
 
@@ -188,7 +188,7 @@ THE SOFTWARE.
                 // here we assume that the formatting "type" in ANSI SGR
                 // terms is indeed intensity
                 if (attributeValue != nil)
-                    thisSGRCode = ([[NSFontManager sharedFontManager] weightOfFont:attributeValue] >= kBoldFontMinWeight)
+                    thisSGRCode = ([NSFontManager.sharedFontManager weightOfFont:attributeValue] >= kBoldFontMinWeight)
                                     ? AMR_SGRCodeIntensityBold : AMR_SGRCodeIntensityNormal;
                 else
                     thisSGRCode = AMR_SGRCodeIntensityNormal;
@@ -331,13 +331,13 @@ THE SOFTWARE.
 
 - (NSString*) ansiEscapedStringWithCodesAndLocations:(NSArray*)aCodesArray cleanString:(NSString*)aCleanString
 {
-    NSMutableString* retStr = [NSMutableString stringWithCapacity:[aCleanString length]];
+    NSMutableString* retStr = [NSMutableString stringWithCapacity:aCleanString.length];
 
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:kAMRCodeDictKey_location ascending:YES];
     NSArray *codesArray = [aCodesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
 
     NSUInteger aCleanStringIndex = 0;
-    NSUInteger aCleanStringLength = [aCleanString length];
+    NSUInteger aCleanStringLength = aCleanString.length;
     for (NSDictionary *thisCodeDict in codesArray)
     {
         if (!(  [thisCodeDict objectForKey:kAMRCodeDictKey_code] &&
@@ -391,7 +391,7 @@ THE SOFTWARE.
     // sequence that specifies the end of the formatting run started by
     // the currently handled code, and generate a range from the difference
     // in those codes' locations within the clean aString.
-    for (NSUInteger iCode = 0; iCode < [formatCodes count]; iCode++)
+    for (NSUInteger iCode = 0; iCode < formatCodes.count; iCode++)
     {
         NSDictionary *thisCodeDict = formatCodes[iCode];
         AMR_SGRCode thisCode = [thisCodeDict[kAMRCodeDictKey_code] unsignedIntValue];
@@ -501,14 +501,14 @@ THE SOFTWARE.
                 break;
             case AMR_SGRCodeIntensityBold:
                 {
-                NSFont *boldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSBoldFontMask];
+                NSFont *boldFont = [NSFontManager.sharedFontManager convertFont:self.font toHaveTrait:NSBoldFontMask];
                 thisAttributeValue = boldFont;
                 }
                 break;
             case AMR_SGRCodeIntensityNormal:
             case AMR_SGRCodeIntensityFaint:
                 {
-                NSFont *unboldFont = [[NSFontManager sharedFontManager] convertFont:self.font toHaveTrait:NSUnboldFontMask];
+                NSFont *unboldFont = [NSFontManager.sharedFontManager convertFont:self.font toHaveTrait:NSUnboldFontMask];
                 thisAttributeValue = unboldFont;
                 }
                 break;
@@ -910,7 +910,7 @@ BOOL floatsEqual(CGFloat first, CGFloat second, CGFloat maxAbsError)
     ];
     for (NSNumber *thisSGRCodeNumber in ansiFgColorCodes)
     {
-        AMR_SGRCode thisSGRCode = [thisSGRCodeNumber intValue];
+        AMR_SGRCode thisSGRCode = thisSGRCodeNumber.intValue;
         NSColor *thisColor = [self colorForSGRCode:thisSGRCode];
 
         AMR_HSB thisColorHSB = getHSBFromColor(thisColor);
