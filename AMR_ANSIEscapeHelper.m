@@ -145,10 +145,9 @@ THE SOFTWARE.
 {
     NSMutableArray *codesAndLocations = [NSMutableArray array];
 
-    NSArray *attrNames = [NSArray arrayWithObjects:
+    NSArray *attrNames = @[
                           NSFontAttributeName, NSForegroundColorAttributeName,
                           NSBackgroundColorAttributeName, NSUnderlineStyleAttributeName,
-                          nil
                           ];
 
     for (NSString *thisAttrName in attrNames)
@@ -334,14 +333,14 @@ THE SOFTWARE.
     NSMutableString* retStr = [NSMutableString stringWithCapacity:aCleanString.length];
 
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:kAMRCodeDictKey_location ascending:YES];
-    NSArray *codesArray = [aCodesArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+    NSArray *codesArray = [aCodesArray sortedArrayUsingDescriptors:@[sortDescriptor]];
 
     NSUInteger aCleanStringIndex = 0;
     NSUInteger aCleanStringLength = aCleanString.length;
     for (NSDictionary *thisCodeDict in codesArray)
     {
-        if (!(  [thisCodeDict objectForKey:kAMRCodeDictKey_code] &&
-                [thisCodeDict objectForKey:kAMRCodeDictKey_location]
+        if (!(  thisCodeDict[kAMRCodeDictKey_code] &&
+                thisCodeDict[kAMRCodeDictKey_location]
             ))
             continue;
 
@@ -513,13 +512,13 @@ THE SOFTWARE.
                 }
                 break;
             case AMR_SGRCodeUnderlineSingle:
-                thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleSingle];
+                thisAttributeValue = @(NSUnderlineStyleSingle);
                 break;
             case AMR_SGRCodeUnderlineDouble:
-                thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleDouble];
+                thisAttributeValue = @(NSUnderlineStyleDouble);
                 break;
             case AMR_SGRCodeUnderlineNone:
-                thisAttributeValue = [NSNumber numberWithInteger:NSUnderlineStyleNone];
+                thisAttributeValue = @(NSUnderlineStyleNone);
                 break;
             case AMR_SGRCodeAllReset:
             case AMR_SGRCodeFgReset:
